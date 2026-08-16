@@ -1,0 +1,35 @@
+{
+  "machines": {
+    "edge": "",
+    "parent": "",
+    "peers": [
+    ]
+  },
+  "paths": {
+    "venv": ".venv",
+    "production_replay_src": "src",
+    "production_arl_setup": "production-arl-setup",
+    "production_arl_setup_venv": ".venv",
+    "production_arl_setup_config": "production-arl-setup/config.yaml",
+    "output_dir": "output",
+    "traffic_profile": "output/traffic_profile.json",
+    "replay_script": "replay.js"
+  },
+  "ssh": {
+    "ssh_key_path": "/Users/arnsharm/.ssh/identity",
+    "connect_timeout": 30,
+    "command_timeout": 60
+  },
+  "arl_setup": {
+    "default_origin_host": null,
+    "timeout": 3000
+  },
+  "prewarm": {
+    "enabled": false,
+    "command": "# Placeholder for prewarm k6 scripts - update this command when ready"
+  },
+  "replay": {
+    "log_level": "requests",
+    "shard_dir": "output/shards"
+  }
+}
