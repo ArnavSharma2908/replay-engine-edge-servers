@@ -1,0 +1,136 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configs>
+  <trident:edge-config version="5.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:trident="uri:trident.com/metadata/trident/5.0" xmlns:assign="uri:trident.com/metadata/assign/5.0" xmlns:auth="uri:trident.com/metadata/auth/5.0" xmlns:cache="uri:trident.com/metadata/cache/5.0" xmlns:config="uri:trident.com/metadata/config/5.0" xmlns:edgecomputing="uri:trident.com/metadata/edgecomputing/5.0" xmlns:edgeservices="uri:trident.com/metadata/edgeservices/5.0" xmlns:forward="uri:trident.com/metadata/forward/5.0" xmlns:network="uri:trident.com/metadata/network/5.0" xmlns:reporting="uri:trident.com/metadata/reporting/5.0" xmlns:security="uri:trident.com/metadata/security/5.0" xmlns:match="uri:trident.com/metadata/match/5.0" xsi:schemaLocation="uri:trident.com/metadata/trident/5.0 schemas/baseline/trident.xsd
+uri:trident.com/metadata/assign/5.0 schemas/baseline/assign.xsd
+uri:trident.com/metadata/auth/5.0 schemas/baseline/auth.xsd
+uri:trident.com/metadata/cache/5.0 schemas/baseline/cache.xsd
+uri:trident.com/metadata/config/5.0 schemas/baseline/config.xsd
+uri:trident.com/metadata/edgecomputing/5.0 schemas/baseline/edgecomputing.xsd
+uri:trident.com/metadata/edgeservices/5.0 schemas/baseline/edgeservices.xsd
+uri:trident.com/metadata/forward/5.0 schemas/baseline/forward.xsd
+uri:trident.com/metadata/network/5.0 schemas/baseline/network.xsd
+uri:trident.com/metadata/reporting/5.0 schemas/baseline/reporting.xsd
+uri:trident.com/metadata/security/5.0 schemas/baseline/security.xsd
+uri:trident.com/metadata/match/5.0 schemas/baseline/match.xsd">
+   
+    <!-- OTHER REGION-SPECIFIC EDGESUITE SETTINGS -->
+    <match:region.attribute value="maprule.W.p">
+      <cache:store.mem-max-size>80MB</cache:store.mem-max-size>
+      <config:memory.mem-total-limit>850MB</config:memory.mem-total-limit>
+      <edgecomputing:esi.tree-caching.max-memory>300000000B</edgecomputing:esi.tree-caching.max-memory>
+      <edgecomputing:scheduler.active-async-threads>3</edgecomputing:scheduler.active-async-threads>
+    </match:region.attribute>
+    <!-- REGION 999 SPECIFIC XSLT SETTINGS -->
+    <match:region.attribute value="maprule.W.p.special999">
+      <cache:store.mem-max-size>80MB</cache:store.mem-max-size>
+      <config:memory.mem-total-limit>850MB</config:memory.mem-total-limit>
+      <edgecomputing:esi.tree-caching.max-memory>300000000B</edgecomputing:esi.tree-caching.max-memory>
+      <edgecomputing:scheduler.active-async-threads>5</edgecomputing:scheduler.active-async-threads>
+      <edgecomputing:scheduler.prereport-flit-threshold>100s</edgecomputing:scheduler.prereport-flit-threshold>
+    </match:region.attribute>
+    <!-- NEW IBS REGIONS SPECIFIC XSLT SETTINGS -->
+    <match:region.attribute value="maprule.W.p.specialIBS">
+      <cache:store.mem-max-size>80MB</cache:store.mem-max-size>
+      <config:memory.mem-total-limit>850MB</config:memory.mem-total-limit>
+      <edgecomputing:esi.tree-caching.max-memory>300000000B</edgecomputing:esi.tree-caching.max-memory>
+      <edgecomputing:scheduler.active-async-threads>3</edgecomputing:scheduler.active-async-threads>
+      <edgecomputing:scheduler.prereport-flit-threshold>100s</edgecomputing:scheduler.prereport-flit-threshold>
+    </match:region.attribute>
+    <!-- lower asi mem requirements for smaller/older machines -->
+    <match:region.attribute value="ghostip-216.32.119.38 ghostip-216.32.119.6 ghostip-216.32.119.7 ghostip-216.32.119.71 ghostip-216.32.119.9 ghostip-216.32.119.41 ghostip-216.32.119.39 ghostip-216.32.119.70 ghostip-216.32.119.73 ghostip-216.32.119.72 ghostip-216.32.119.8">
+      <edgecomputing:esi.tree-caching.max-memory>250000000B</edgecomputing:esi.tree-caching.max-memory>
+    </match:region.attribute>
+
+    <!-- PER-REGION EDGEJAVA SETTINGS -->
+    <match:region.attribute value="maprule.W.p">
+      <edgecomputing:scheduler.prereport-flit-threshold>100s</edgecomputing:scheduler.prereport-flit-threshold>
+    </match:region.attribute>
+    <match:region.attribute value="maprule.W.j1">
+      <cache:store.mem-max-size>100MB</cache:store.mem-max-size>
+    </match:region.attribute>
+    <match:region.attribute value="maprule.W.j5">
+      <cache:store.mem-max-size>20MB</cache:store.mem-max-size>
+    </match:region.attribute>
+    <match:region.attribute value="maprule.W.j1">
+      <edgecomputing:java.appserver name="*">
+        <tomcat.jvm-heap.min>2MB</tomcat.jvm-heap.min>
+        <tomcat.jvm-heap.max>95MB</tomcat.jvm-heap.max>
+      </edgecomputing:java.appserver>
+    </match:region.attribute>
+    <match:region.number value="1141 1622 2030">
+      <edgecomputing:java.appserver name="*">
+        <tomcat.jvm-heap.min>2MB</tomcat.jvm-heap.min>
+        <tomcat.jvm-heap.max>95MB</tomcat.jvm-heap.max>
+      </edgecomputing:java.appserver>
+    </match:region.number>
+    <match:region.attribute value="static.seneca-ibm-test">
+      <edgecomputing:java.appserver name="*">
+      </edgecomputing:java.appserver>
+      <edgecomputing:java.appserver name="*">
+        <was.jvm-heap.max>95MB</was.jvm-heap.max>
+      </edgecomputing:java.appserver>
+    </match:region.attribute>
+    <match:region.attribute value="ghostip-63.241.29.172">
+      <edgecomputing:java.appserver name="*">
+        <tomcat.jvm-heap.min>100MB</tomcat.jvm-heap.min>
+        <tomcat.jvm-heap.max>800MB</tomcat.jvm-heap.max>
+      </edgecomputing:java.appserver>
+   </match:region.attribute>   
+    <match:region.attribute value="ghostip-63.241.29.164">
+      <edgecomputing:java.appserver name="*">
+        <tomcat.jvm-heap.min>100MB</tomcat.jvm-heap.min>
+        <tomcat.jvm-heap.max>800MB</tomcat.jvm-heap.max>
+      </edgecomputing:java.appserver>
+    </match:region.attribute>
+    <match:region.number value="2604">
+      <config:heartbeat>off</config:heartbeat>
+    </match:region.number>
+    <match:region.attribute value="ghostip-209.221.135.130">
+      <config:heartbeat>off</config:heartbeat>
+    </match:region.attribute>
+    <!-- EJ Test Regions -->
+    <match:region.number value="2566">
+      <edgecomputing:system.service name="EdgeJava">
+        <common>
+          <dnsp-loadbal.status>on</dnsp-loadbal.status>
+        </common>
+      </edgecomputing:system.service>
+
+    </match:region.number>
+    
+
+  <trident:template name="TEST_TEMPLATE">
+    <body>
+      <reporting:edge-logging.send-receipt name="WAF_DLR_ISS_BEACON">
+        <status>on</status>
+        <hostname>localhost</hostname>
+        <port>8081</port>
+        <url>/tridenthttppost</url>
+        <use-client-side>on</use-client-side>
+        <method>POST</method>
+        <format>beacon_type=S&amp;b=%W{app_id}&amp;ct=%t&amp;ip=%i&amp;rm=%j&amp;oh=%h&amp;ou=%u&amp;sc=%H&amp;ri=%I&amp;sp=%(AK_IN_PORT)&amp;pr=%(AK_SCHEME)&amp;ua=%r{User-Agent}&amp;dp=%(AK_HOSTHEADER)&amp;country=%g{country_code}&amp;regional_info=%g{region_co
+          de}&amp;city=%g{city}&amp;dma=%g{dma}&amp;pmsa=%g{pmsa}&amp;areacode=%g{areacode}&amp;county=%g{county}&amp;fips=%g{fips}&amp;lat=%g{lat}&amp;long=%g{long}&amp;zip=%g{zip}&amp;continent=%g{continent}&amp;throughput=%g{throughput}&amp;bw=%g{bw}&amp;asnum=%g{asnum}&amp;timezon
+          e=%g{timezone}&amp;network=%g{network}&amp;network_type=%g{network_type}&amp;msa=%g{msa}&amp;wr=%W{warn_rules}&amp;wm=%W{warn_msg}&amp;wt=%W{warn_tags}&amp;wd=%W{warn_data}&amp;ws=%W{warn_slr}&amp;dr=%W{deny_rules}&amp;dm=%W{deny_msg}&amp;dt=%W{deny_tags}&amp;dd=%W{deny_data
+          }&amp;ds=%W{deny_slr}&amp;ascr=%W{anom_scr}&amp;crs=%(CRS_VERSION)&amp;crsm=%(WAF_CRS_MODE)&amp;rsr=%(WAF_RSR)&amp;dor=%(WAF_DOR)&amp;oft=%(WAF_OFT)&amp;rsg=%(WAF_CRS_RISK_GROUPS)&amp;rst=%(WAF_CRS_RISK_TUPLES)&amp;ars=%(WAF_CRS_RISK_SCRS)</format>
+        <aggregate-time>15s</aggregate-time>
+        <aggregate-bytes>500KB</aggregate-bytes>
+        <aggregate-lines>10000</aggregate-lines>
+      </reporting:edge-logging.send-receipt>
+    </body>
+  </trident:template>
+
+    <!-- For Perf Testing Use Only; as requested by Vivek for the new asiMTSE related tests
+    <edgecomputing:scheduler.active-async-threads>4</edgecomputing:scheduler.active-async-threads>
+    For Perf Testing Use Only -->
+
+<!-- Disable all new features for GREL-247 -->
+<!--
+<config:rollback.remove-reset-syncmtse-cb>on</config:rollback.remove-reset-syncmtse-cb>
+<config:rollback.remove-store-abort-cb>on</config:rollback.remove-store-abort-cb>
+<config:rollback.hoc-add-in-goc>on</config:rollback.hoc-add-in-goc>
+<config:rollback.goc-init-api>on</config:rollback.goc-init-api>
+-->
+<cache:store.active-object-table.buckets-num>1048576</cache:store.active-object-table.buckets-num>
+
+  </trident:edge-config>
+</configs>

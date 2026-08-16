@@ -1,0 +1,129 @@
+# Trident ARL Deployer Configuration File
+# This file contains default settings for the deployment tool
+
+# Config Server Settings - where customer ARL files are stored
+config_server:
+  hostname: "198.18.99.44"
+  username: "root"
+  ssh_key_path: "/Users/umidha/.ssh/identity"
+  
+  # Remote directories containing configuration files
+  directories:
+    arl_data: "/home/production/arl.data/"
+    hd_data: "/home/production/hd.data/"
+    waf_data: "/home/production/waf.data/"
+    pearl_data: "/home/production/pearl.data/"
+
+# Ghost Machine Settings - default paths on edge/parent/peer machines
+ghost:
+  # Where ARL files are stored on Ghost machines
+  arl_data_path: "/a/etc/ghost/arl.data/"
+  
+  # Where HD (Host Definition) files are stored
+  hd_data_path: "/a/etc/ghost/hd.data/"
+  
+  # Where WAF (Web Application Firewall) files are stored
+  waf_data_path: "/a/etc/ghost/waf.data/"
+
+  # Where Pearl files are stored
+  pearl_data_path: "/a/etc/ghost/pearl.data/"
+
+  # Ghost configuration files
+  arlindex_path: "/a/etc/ghost/arl.data/arlindex.xml"
+  ghost_xml_path: "/a/etc/ghost/ghost.xml"
+  baseline_hacks_path: "/a/etc/ghost/baseline.data/baseline-hacks.xml"
+  
+  # Ghost access log path
+  access_log_path: "/a/logs/ghost.access.log"
+  
+  # Ghost binary and control commands
+  ghost_binary: "/a/bin/ghost"
+  trident_run: "/a/sbin/trident_run"
+  
+  # Ghost restart commands
+  restart_commands:
+    check: "check webghost"
+    stop: "stickystop webghost"
+    unstickystop: "unstickystop webghost -r"  # Append reason dynamically
+    restart: "restart webghost"
+
+# SSH Settings
+ssh:
+  # SSH key path for authentication
+  ssh_key_path: "/Users/umidha/.ssh/identity"
+  
+  # Connection timeout in seconds
+  connect_timeout: 30
+  
+  # Command execution timeout in seconds
+  command_timeout: 30
+  
+  # SCP transfer timeout in seconds (for large files)
+  transfer_timeout: 300
+  
+  # Number of retry attempts for failed connections
+  max_retries: 3
+  
+  # Delay between retries in seconds
+  retry_delay: 5
+
+# Deployment Settings
+deployment:
+  # Create backups before modifying files
+  create_backups: true
+  
+  # Backup file suffix
+  backup_suffix: ".back"
+  
+  # State directory for tracking deployments
+  state_dir: ".deployment_state"
+  
+  # Enable rollback on verification failure
+  auto_rollback_on_failure: false
+  
+  # Maximum number of self-healing attempts
+  max_healing_attempts: 3
+
+# Verification Settings
+verification:
+  # Wait time after curl request before checking logs (seconds)
+  log_flush_wait: 5
+  
+  # Number of lines to tail from access log
+  log_tail_lines: 100
+  
+  # Timeout for verification curl request
+  curl_timeout: 30
+  
+  # Default sample URL pattern if not provided
+  default_sample_path: "/"
+
+# Logging Settings
+logging:
+  # Log level: DEBUG, INFO, WARNING, ERROR, CRITICAL
+  level: "INFO"
+  
+  # Log format
+  format: "%(asctime)s - %(name)s - %(levelname)s - %(message)s"
+  
+  # Log to file
+  file_enabled: true
+  file_path: "arl_deployer.log"
+  
+  # Log to console
+  console_enabled: true
+
+# Sample URL Resolution - order of precedence
+sample_url_sources:
+  # 1. CLI argument (--sample-url)
+  # 2. Traffic profile file
+  - type: "traffic_profile"
+    path: "output/traffic_profile.json"
+    key_pattern: "unique_hostnames.{hostname}-{cpcode}"
+  # 3. YAP test file
+  - type: "yap_file"
+    path: null  # Provided via CLI
+  # 4. Fallback: Generate simple GET request
+  - type: "fallback"
+    method: "GET"
+    path: "/"

@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?>
+ 
+<configs xmlns:cache="uri:trident.com/metadata/cache/5.0" xmlns:edgeservices="uri:trident.com/metadata/edgeservices/5.0" xmlns:config="uri:trident.com/metadata/config/5.0" xmlns:network="uri:trident.com/metadata/network/5.0" xmlns:auth="uri:trident.com/metadata/auth/5.0" xmlns:match="uri:trident.com/metadata/match/5.0" xmlns:forward="uri:trident.com/metadata/forward/5.0" xmlns:comment="uri:trident.com/metadata/comment/5.0" xmlns:trident="uri:trident.com/metadata/trident/5.0" xmlns:security="uri:trident.com/metadata/security/5.0" xmlns:reporting="uri:trident.com/metadata/reporting/5.0" xmlns:edgecomputing="uri:trident.com/metadata/edgecomputing/5.0" xmlns:assign="uri:trident.com/metadata/assign/5.0">
+ 
+    <comment:note value="Property Manager generated metadata. XML engine version: 25.3"/>
+    <comment:note value="Catalog version: 25.3.0.1"/>
+    <comment:note value="Product name: Fresca"/>
+    <comment:note value="Property name: star.vggcdn.net_pm, version: 37"/>
+    <comment:note value="Asset ID: 10991576"/>
+    <comment:note value="File ID: 774785"/>
+    <comment:note value="AcgID: "/>
+    <comment:note value="AccountId: F-AC-3408515"/>
+    <comment:note value="Hostnames: buy.stubhubstatic.com buy.vggcdn.net cdn.viagogo.net cdn1.viagogo.net cdn2.viagogo.net edge.viagogo.net img.stubhubstatic.com img.vggcdn.net my.stubhubstatic.com my.vggcdn.net sell.stubhubstatic.com sell.vggcdn.net ws.stubhubstatic.com ws.vggcdn.net"/>
+    <trident:edge-config version="5.0">
+
+
+ <network:dns.simulate-lookup>
+ <status>on</status>
+ <!-- Edited by Amit. Removed 192.168.1.46 and added 198.18.180.119 i.e. the PARENT/ORIGIN IP -->
+   <addr>ORIGIN</addr>
+ </network:dns.simulate-lookup>
+
+ <cache:key.query-arguments>
+ <status>on</status>
+ <action>ignore-all</action>
+ </cache:key.query-arguments>
+
+ <!-- remove all uri components
+ and just go for the file -->
+ <forward:modify-path.by-rule>
+ <rule>=/file_1m.html?sim200</rule>
+ <remove-slash>on</remove-slash>
+ <status>on</status>
+ </forward:modify-path.by-rule>
+
+
+ <cache:max-age>100d</cache:max-age>
+ <forward:origin-server>
+ <host>origin.yap.trident.com</host>
+ <!-- Apache port ip -->
+ <port>8080</port>
+ </forward:origin-server>
+ <!-- downgrade to http when going forward to http -->
+ <security:ssl.force-forward-protocol>HTTP</security:ssl.force-forward-protocol>
+
+    </trident:edge-config>
+</configs>

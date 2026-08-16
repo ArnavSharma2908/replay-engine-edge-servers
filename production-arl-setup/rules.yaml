@@ -1,0 +1,536 @@
+# Self-Healing Rules Configuration
+# This file defines rules for automatically fixing common deployment issues
+
+rules:
+  # Rule 1: Missing hd.data directory or files
+  - name: "missing_hd_data"
+    description: "Copy HD data when missing or inaccessible"
+    enabled: true
+    priority: 1
+    
+    condition:
+      # Trigger when r-line or f-line contains HD data related errors
+      type: "log_pattern"
+      patterns:
+        - "ERR_.*HD.*DATA"
+        - "ERR_FILE_NOT_FOUND.*hd\\.data"
+        - "Cannot access.*hd\\.data"
+      log_types:
+        - "r_line"
+        - "f_line"
+    
+    actions:
+      - type: "copy_directory"
+        description: "Copy HD data from config server to target machine"
+        source:
+          type: "config_server"
+          path: "{hd_data_path}"
+        destination:
+          path: "/a/etc/ghost/hd.data/"
+        targets:
+          - "edge"
+          - "parent"
+          - "peer"
+      
+      - type: "restart_ghost"
+        description: "Restart Ghost to recognize new HD data"
+        targets:
+          - "edge"
+          - "parent"
+          - "peer"
+      
+      - type: "verify"
+        description: "Re-run verification after fix"
+
+  # Rule 2: Missing waf.data directory or files
+  - name: "missing_waf_data"
+    description: "Copy WAF data when missing or inaccessible"
+    enabled: true
+    priority: 1
+    
+    condition:
+      type: "log_pattern"
+      patterns:
+        - "ERR_.*WAF.*DATA"
+        - "ERR_FILE_NOT_FOUND.*waf\\.data"
+        - "Cannot access.*waf\\.data"
+      log_types:
+        - "r_line"
+        - "f_line"
+    
+    actions:
+      - type: "copy_directory"
+        description: "Copy WAF data from config server"
+        source:
+          type: "config_server"
+          path: "{waf_data_path}"
+        destination:
+          path: "/a/etc/ghost/waf.data/"
+        targets:
+          - "edge"
+          - "parent"
+          - "peer"
+      
+      - type: "restart_ghost"
+        description: "Restart Ghost to recognize new WAF data"
+        targets:
+          - "edge"
+          - "parent"
+          - "peer"
+      
+      - type: "verify"
+        description: "Re-run verification"
+
+  # Rule 3: Enable access log file writing
+  - name: "enable_access_log_file_write"
+    description: "Enable access log file writing when no f-line or r-line is detected"
+    enabled: true
+    priority: 1
+
+    condition:
+      type: "verification_failure"
+      reason: "no_f_line"
+      additional_checks:
+        - type: "no_r_line"
+
+    actions:
+      - type: "modify_xml"
+        description: "Enable access log file writing in baseline.xml"
+        file: "/a/etc/ghost/baseline.data/baseline.xml"
+        operation: "add_or_update"
+        tags:
+          - "<reporting:access-log.file-write>on</reporting:access-log.file-write>"
+          - "<reporting:access-log.pipe-write>off</reporting:access-log.pipe-write>"
+        insert_location: "before_closing_tag"
+        closing_tag: "</trident:edge-config>"
+        targets:
+          - "edge"
+          - "parent"
+          - "peer"
+
+      - type: "restart_ghost"
+        description: "Restart Ghost to apply access log configuration"
+        targets:
+          - "edge"
+          - "parent"
+          - "peer"
+
+      - type: "wait"
+        description: "Wait for Ghost to fully start"
+        duration: 10
+
+      - type: "verify"
+        description: "Re-run verification after enabling access log"
+
+  # Rule 4: Ghost not accepting connections
+  - name: "ghost_not_accepting_connections"
+    description: "Restart Ghost when it's not accepting connections"
+    enabled: true
+    priority: 2
+    
+    condition:
+      type: "verification_failure"
+      reason: "no_f_line"
+      additional_checks:
+        - type: "port_stats"
+          pattern: "Ports Stats - accepts per port:0:0, 80:0, 443:0"
+    
+    actions:
+      - type: "restart_ghost"
+        description: "Force restart Ghost with stickystop/unstickystop"
+        command: "unstickystop webghost && stickystop webghost"
+        targets:
+          - "edge"
+      
+      - type: "wait"
+        description: "Wait for Ghost to fully start"
+        duration: 10
+      
+      - type: "check_ghost_status"
+        description: "Verify Ghost is running and accepting connections"
+        checks:
+          - "process_running"
+          - "port_stats_accepting"
+      
+      - type: "verify"
+        description: "Re-run verification"
+
+  # Rule 4: DNS simulation not configured correctly
+  - name: "dns_simulation_failure"
+    description: "Fix DNS simulation lookup configuration"
+    enabled: true
+    priority: 2
+    
+    condition:
+      type: "verification_failure"
+      reason: "wrong_forward_ip"
+    
+    actions:
+      - type: "modify_xml"
+        description: "Add or update DNS simulation lookup in ARL file"
+        file: "{arl_file_path}"
+        operation: "add_or_update"
+        tags:
+          - "<network:dns.simulate-lookup>"
+          - "<status>on</status>"
+          - "<addr>{parent_ip}</addr>"
+          - "</network:dns.simulate-lookup>"
+        target: "edge"
+      
+      - type: "restart_ghost"
+        description: "Restart Ghost to apply configuration"
+        targets:
+          - "edge"
+      
+      - type: "verify"
+        description: "Re-run verification"
+
+  # Rule 5: ARL file not found in arlindex.xml
+  - name: "arl_not_in_arlindex"
+    description: "Ensure ARL file is properly registered in arlindex.xml"
+    enabled: true
+    priority: 1
+    
+    condition:
+      type: "verification_failure"
+      reason: "no_f_line"
+      additional_checks:
+        - type: "log_pattern"
+          patterns:
+            - "ERR_NO_CONFIG"
+            - "No configuration found for host"
+          log_types:
+            - "cache.log"
+    
+    actions:
+      - type: "modify_xml"
+        description: "Add ARL file entry to arlindex.xml"
+        file: "/a/etc/ghost/arl.data/arlindex.xml"
+        operation: "add"
+        tags:
+          - "<trident:include type=\"arldata\" file=\"{arl_filename}\" argument vcd=\"10000\">"
+          - "<host>{hostname}</host>"
+          - "</trident:include>"
+        targets:
+          - "edge"
+          - "parent"
+          - "peer"
+      
+      - type: "restart_ghost"
+        description: "Restart Ghost to reload arlindex.xml"
+        targets:
+          - "edge"
+          - "parent"
+          - "peer"
+      
+      - type: "verify"
+        description: "Re-run verification"
+
+  # Rule 6: Missing pearl.data directory or files
+  - name: "missing_pearl_data"
+    description: "Copy Pearl data when missing or inaccessible"
+    enabled: true
+    priority: 1
+
+    condition:
+      type: "log_pattern"
+      patterns:
+        - "ERR_.*PEARL.*DATA"
+        - "ERR_FILE_NOT_FOUND.*pearl\\.data"
+        - "Cannot access.*pearl\\.data"
+      log_types:
+        - "r_line"
+        - "f_line"
+
+    actions:
+      - type: "copy_directory"
+        description: "Copy Pearl data from config server"
+        source:
+          type: "config_server"
+          path: "{pearl_data_path}"
+        destination:
+          path: "/a/etc/ghost/pearl.data/"
+        targets:
+          - "edge"
+          - "parent"
+          - "peer"
+
+      - type: "restart_ghost"
+        description: "Restart Ghost to recognize new Pearl data"
+        targets:
+          - "edge"
+          - "parent"
+          - "peer"
+
+      - type: "verify"
+        description: "Re-run verification"
+
+  # Rule 7: DNS in region error - remove parent IP from region-service-ips
+  - name: "dns_in_region_error"
+    description: "Comment out parent IP from region-service-ips when ERR_DNS_IN_REGION occurs"
+    enabled: true
+    priority: 1
+
+    condition:
+      type: "log_pattern"
+      patterns:
+        - "ERR_DNS_IN_REGION"
+      log_types:
+        - "f_line"
+
+    actions:
+      - type: "modify_xml"
+        description: "Comment out region-service-ips tag containing parent IP"
+        file: "/a/etc/ghost/ghost.xml"
+        operation: "comment"
+        tags:
+          - "<config:legacy.region-service-ips>{parent_ip}</config:legacy.region-service-ips>"
+        targets:
+          - "edge"
+
+      - type: "restart_ghost"
+        description: "Restart Ghost on edge to apply changes"
+        targets:
+          - "edge"
+
+      - type: "wait"
+        description: "Wait for Ghost to fully start"
+        duration: 10
+
+      - type: "verify"
+        description: "Re-run verification after removing parent from region IPs"
+
+  # Rule 8: Parent connection failure - restart Ghost on parent
+  - name: "parent_connect_fail"
+    description: "Restart Ghost on parent when edge cannot connect"
+    enabled: true
+    priority: 1
+
+    condition:
+      type: "log_pattern"
+      patterns:
+        - "ERR_CONNECT_FAIL"
+      log_types:
+        - "r_line"
+        - "f_line"
+
+    actions:
+      - type: "restart_ghost"
+        description: "Restart Ghost on parent to accept connections"
+        targets:
+          - "parent"
+
+      - type: "wait"
+        description: "Wait for Ghost to fully start"
+        duration: 10
+
+      - type: "check_ghost_status"
+        description: "Verify Ghost is running and accepting connections on parent"
+        checks:
+          - "process_running"
+          - "port_stats_accepting"
+        targets:
+          - "parent"
+
+      - type: "verify"
+        description: "Re-run verification after parent restart"
+
+  # Rule 9: Missing ARL file on target machine
+  - name: "missing_arl_file"
+    description: "Copy ARL file if missing from target machine"
+    enabled: true
+    priority: 1
+
+    condition:
+      type: "verification_failure"
+      reason: "no_f_line"
+      additional_checks:
+        - type: "file_not_exists"
+          path: "/a/etc/ghost/arl.data/{arl_filename}"
+
+    actions:
+      - type: "copy_file"
+        description: "Copy ARL file from config server"
+        source:
+          type: "config_server"
+          path: "{config_server_arl_path}"
+        destination:
+          path: "/a/etc/ghost/arl.data/{arl_filename}"
+        targets:
+          - "edge"
+          - "parent"
+          - "peer"
+
+      - type: "restart_ghost"
+        description: "Restart Ghost to recognize new ARL file"
+        targets:
+          - "edge"
+          - "parent"
+          - "peer"
+
+      - type: "verify"
+        description: "Re-run verification"
+
+  # Rule 10: Missing origin metadata - add origin server configuration
+  - name: "missing_origin_metadata"
+    description: "Add origin server configuration when ERR_INVALID_REQ_NOORIGINMDT occurs"
+    enabled: true
+    priority: 1
+
+    condition:
+      type: "log_pattern"
+      patterns:
+        - "ERR_INVALID_REQ_NOORIGINMDT"
+        - "nooriginmdt"
+      log_types:
+        - "r_line"
+
+    actions:
+      - type: "modify_xml"
+        description: "Add origin server configuration with match:host for hostname on edge"
+        file: "{arl_file_path}"
+        operation: "add"
+        tags:
+          - "<match:hoit host=\"{hostname}\">"
+          - "<forward:origin-server.dns-name.status>on</forward:origin-server.dns-name.status>"
+          - "<forward:origin-server.dns-name.ip-address>{parent_ip}</forward:origin-server.dns-name.ip-address>"
+          - "<forward:origin-server.host>{origin_host}</forward:origin-server.host>"
+          - "</match:hoit>"
+        targets:
+          - "edge"
+
+      - type: "modify_xml"
+        description: "Add origin host to parent arlindex.xml for the ARL file entry"
+        file: "/a/etc/ghost/arl.data/arlindex.xml"
+        operation: "add_host_to_include"
+        # This will find the <trident:include> entry for the ARL file and add origin_host as additional <host>
+        arl_file: "{arl_filename}"
+        tags:
+          - "<host>{origin_host}</host>"
+        targets:
+          - "parent"
+
+        # Note: This rule requires origin_host and hostname to be provided via CLI
+        # Usage: arl-deploy deploy --cpcode XXX --hostname example.com --origin-host origin.example.com
+        # Example arlindex.xml before:
+        #   <trident:include type="arldata" file="B-3-U409LI_nsu.tridenthd.net.xml">
+        #       <host>opensignal-nsu.tridenthd.net</host>
+        #   </trident:include>
+        # After:
+        #   <trident:include type="arldata" file="B-3-U409LI_nsu.tridenthd.net.xml">
+        #       <host>opensignal-nsu.tridenthd.net</host>
+        #       <host>opensignal.postfix.trident.com</host>
+        #   </trident:include>
+
+      - type: "restart_ghost"
+        description: "Restart Ghost on edge and parent to apply origin configuration"
+        targets:
+          - "edge"
+          - "parent"
+
+      - type: "wait"
+        description: "Wait for Ghost to fully start"
+        duration: 30
+
+      - type: "verify"
+        description: "Re-run verification after adding origin metadata"
+
+  # Rule 11: Missing SSL forward certificate - comment out auth:origin.ssl-fwd-cert in ARL
+  - name: "missing_ssl_fwd_cert"
+    description: "Comment out SSL forward certificate requirement when ERR_FWD_CERT_SPEC_MISSING occurs"
+    enabled: true
+    priority: 1
+
+    condition:
+      type: "log_pattern"
+      patterns:
+        - "ERR_FWD_CERT_SPEC_MISSING|ssl_fwd_cert"
+      log_types:
+        - "r_line"
+        - "f_line"
+
+    actions:
+      - type: "modify_xml"
+        description: "Comment out auth:origin.ssl-fwd-cert tags in ARL file"
+        file: "{arl_file_path}"
+        operation: "comment"
+        tags:
+          - "<auth:origin.ssl-fwd-cert>"
+        targets:
+          - "edge"
+          - "parent"
+
+      - type: "restart_ghost"
+        description: "Restart Ghost to apply ARL changes"
+        targets:
+          - "edge"
+          - "parent"
+
+      - type: "wait"
+        description: "Wait for Ghost to fully start"
+        duration: 10
+
+      - type: "verify"
+        description: "Re-run verification after disabling SSL forward cert requirement"
+
+  # Rule 12: URL Disallowed Auth - comment out browser query validation
+  - name: "url_disallowed_auth"
+    description: "Comment out auth:browser.query.validate when ERR_URL_DIS_AUTH occurs"
+    enabled: true
+    priority: 1
+
+    condition:
+      type: "log_pattern"
+      patterns:
+        - "ERR_URL_DIS_AUTH"
+      log_types:
+        - "r_line"
+
+    actions:
+      - type: "modify_xml"
+        description: "Comment out auth:browser.query.validate tags in ARL file on edge"
+        file: "{arl_file_path}"
+        operation: "comment"
+        tags:
+          - "<auth:browser.query.validate>"
+        targets:
+          - "edge"
+
+      - type: "modify_xml"
+        description: "Comment out auth:browser.query.validate tags in ARL file on parent"
+        file: "{arl_file_path}"
+        operation: "comment"
+        tags:
+          - "<auth:browser.query.validate>"
+        targets:
+          - "parent"
+
+      - type: "restart_ghost"
+        description: "Restart Ghost to apply ARL changes"
+        targets:
+          - "edge"
+          - "parent"
+
+      - type: "wait"
+        description: "Wait for Ghost to fully start"
+        duration: 10
+
+      - type: "verify"
+        description: "Re-run verification after disabling browser query auth"
+
+# Global rule settings
+settings:
+  # Maximum number of times to run all rules
+  max_iterations: 1
+  
+  # Wait time between iterations (seconds)
+  iteration_delay: 5
+  
+  # Stop on first successful fix
+  stop_on_success: true
+  
+  # Continue to next rule if current rule fails
+  continue_on_rule_failure: true
+  
+  # Enable detailed logging of rule execution
+  verbose_logging: true

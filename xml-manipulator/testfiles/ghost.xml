@@ -1,0 +1,976 @@
+<?xml version="1.0" encoding="UTF-8"?><!--
+  Static configuration parameters for GHOST.
+  This file is created by netdeploy and cannot be updated with mupdater.
+  --><configs>
+  <edge-config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:trident="uri:trident.com/metadata/trident/5.0" xmlns:assign="uri:trident.com/metadata/assign/5.0" xmlns:auth="uri:trident.com/metadata/auth/5.0" xmlns:cache="uri:trident.com/metadata/cache/5.0" xmlns:config="uri:trident.com/metadata/config/5.0" xmlns:edgecomputing="uri:trident.com/metadata/edgecomputing/5.0" xmlns:edgeservices="uri:trident.com/metadata/edgeservices/5.0" xmlns:tridentextension="uri:trident.com/metadata/tridentextension/5.0" xmlns:forward="uri:trident.com/metadata/forward/5.0" xmlns:network="uri:trident.com/metadata/network/5.0" xmlns:reporting="uri:trident.com/metadata/reporting/5.0" xmlns:security="uri:trident.com/metadata/security/5.0" xmlns:match="uri:trident.com/metadata/match/5.0" version="5.0" xsi:schemaLocation="uri:trident.com/metadata/trident/5.0 schemas/config/trident.xsd uri:trident.com/metadata/assign/5.0 schemas/config/assign.xsd uri:trident.com/metadata/auth/5.0 schemas/config/auth.xsd uri:trident.com/metadata/cache/5.0 schemas/config/cache.xsd uri:trident.com/metadata/config/5.0 schemas/config/config.xsd uri:trident.com/metadata/edgecomputing/5.0 schemas/config/edgecomputing.xsd uri:trident.com/metadata/edgeservices/5.0 schemas/config/edgeservices.xsd uri:trident.com/metadata/forward/5.0 schemas/config/forward.xsd uri:trident.com/metadata/tridentextension/5.0 schemas/baseline/tridentextension.xsd uri:trident.com/metadata/network/5.0 schemas/config/network.xsd uri:trident.com/metadata/reporting/5.0 schemas/config/reporting.xsd uri:trident.com/metadata/security/5.0 schemas/config/security.xsd uri:trident.com/metadata/match/5.0 schemas/config/match.xsd">
+
+	<!-- 2019-06-27 moved from baseline.xml-->
+	<cache:uvm.cache-size>400</cache:uvm.cache-size>
+	<cache:uvm.initial-cache-size>300</cache:uvm.initial-cache-size>
+	<cache:uvm.max-cache-size>400</cache:uvm.max-cache-size>
+	
+	<!-- preparing for UVM feature default enable mode CR 4094481-->
+	<cache:uvm>
+    <status>on</status>
+	  <cache-size>400</cache-size>
+		<lazy-writer>
+			<max-dirty-pages-ratio-percent>0</max-dirty-pages-ratio-percent>
+		</lazy-writer>
+	</cache:uvm>	
+	 <config:rollback.uvm-release-under-pressure>on</config:rollback.uvm-release-under-pressure>
+	 
+	 <!-- 2019-01-10 preventing occasional coredumps caused by 2 ghost processes running at the same time -->
+	<cache:uvm.aio.io-setup-max-events>32000</cache:uvm.aio.io-setup-max-events>
+
+    <!-- 2016-07-26 Enable FPJ1 mode in test environment -->
+    <config:fast-purge.status>on</config:fast-purge.status>
+    <!-- 2016-10-20 Enable FPJ public suffix in test since enabled in production -->
+    <config:fast-purge.new-public-suffix-rules.status>on</config:fast-purge.new-public-suffix-rules.status>
+
+    <!-- 2012-12-15 Enable IPv6 mode in test environment -->
+    <network:ipv6.status>on</network:ipv6.status>
+
+    <!-- 2011-09-29 Bypass debug message rate limiting for testing -->
+    <reporting:debug-rate-limiting-override>on</reporting:debug-rate-limiting-override>
+
+    <!-- 2010-02-08 suggested by Chunhui as ghosts in the field are using 60s -->
+    <config:stalled-thread-detect.heartbeat-timeout>60s</config:stalled-thread-detect.heartbeat-timeout>
+
+<!--
+<config:enable.housekeeping-events>off</config:enable.housekeeping-events>
+ -->
+
+<!--
+<config:phantom-thread.enable>off</config:phantom-thread.enable>
+-->
+
+<!--
+      <reporting:log.headers.response>all</reporting:log.headers.response>
+      <reporting:log.headers.request>all</reporting:log.headers.request>
+      <reporting:log.headers.forward>all</reporting:log.headers.forward>
+      <reporting:log.headers.max-requests>0</reporting:log.headers.max-requests>
+-->
+
+<!--
+<config:metadata.detect-leaks>on</config:metadata.detect-leaks>
+<config:memory.malloc-stktrace-collection>on</config:memory.malloc-stktrace-collection>
+<config:memory.malloc-stats-collection>on</config:memory.malloc-stats-collection>
+<config:memory.memory-pools>off</config:memory.memory-pools>
+-->
+
+<security:secure-arena.size>8388608</security:secure-arena.size>
+
+<config:metadata.suspend-on-startup>
+  <status>on</status>
+  <must-have-files>
+    <file>
+      <type>region</type>
+      <name>region.xml</name>
+    </file>
+    <file>
+      <type>baseline</type>
+      <name>baseline.xml</name>
+    </file>
+    <file>
+      <type>override</type>
+      <name>override.xml</name>
+    </file>
+    <file>
+      <type>arlindex</type>
+      <name>arlindex.xml</name>
+    </file>
+    <file>
+      <type>aclslist</type>
+      <name>allow_dom</name>
+    </file>
+    <file>
+      <type>aclslist</type>
+      <name>allow_ip</name>
+    </file>
+    <file>
+      <type>aclslist</type>
+      <name>deny_dom</name>
+    </file>
+    <file>
+      <type>aclslist</type>
+      <name>deny_ip</name>
+    </file>
+    <file>
+      <type>globalcalist</type>
+      <name>global_server.xml</name>
+    </file>
+    <file>
+      <type>tapiocabaseline</type>
+      <name>baseline.xml</name>
+    </file>
+    <file>
+      <type>tapiocaindex</type>
+      <name>tapiocaindex.xml</name>
+    </file>
+    <file>
+      <type>pearldata</type>
+      <name>pearlindex.xml</name>
+    </file>
+    <file>
+      <type>pearlbilling</type>
+      <name>pearlbillingindex.xml</name>
+    </file>    
+    <file>
+      <type>appsecthr</type>
+      <name>appsecthrindex.xml</name>
+    </file>
+  </must-have-files>
+</config:metadata.suspend-on-startup>
+<match:region.attribute value="network-essl" result="false">
+  <config:metadata.suspend-on-startup>
+    <must-have-files>
+      
+    </must-have-files>
+  </config:metadata.suspend-on-startup>
+</match:region.attribute>
+
+<!--
+  <config:memory.mem-pool.used-mem-tracking>
+    <status>on</status>
+    <pools>ConnStateData ClientHttpRequest fwdState HttpStateData request_t</pools>
+  </config:memory.mem-pool.used-mem-tracking>
+
+  <config:memory.lock-tracking>
+    <status>on</status>
+    <objects>StoreEntry</objects>
+  </config:memory.lock-tracking>
+-->
+
+    <!-- Configure IP 127.0.0.250 as an in-region IP address for ERR_DNS_IN_REGION testing. -->
+    <config:legacy.region-service-ips>127.0.0.250</config:legacy.region-service-ips>
+
+    <!-- 2007-09-05 only enable aioFDVerify in our dev setting as it can become too expensive for production -->
+    <config:enable-aio-fd-verify>on</config:enable-aio-fd-verify>
+
+    <!-- 2005-05-04 iopen-disabled should be off for perf testing -->
+    <config:legacy.iopen-disabled>on</config:legacy.iopen-disabled>
+
+    <!-- 2005-06-15 added for edgescape perf testing use -->
+    <!-- Will be turned ON by perf testing automatically -->
+    <config:enable.simulate-client-ip>off</config:enable.simulate-client-ip>
+
+    <!-- default behavior for old tests -->
+    <network:http.allow-connect>2</network:http.allow-connect>
+
+    <network:tcp.trident-ip-address>198.18.99.36</network:tcp.trident-ip-address>
+
+    <network:cci.tmp-msg-file>/tmp/cci_msg.tmp</network:cci.tmp-msg-file>
+
+    <!--
+    <network:tcp.trident-ip-address>12.129.72.128</network:tcp.trident-ip-address>
+    <network:cci.startup-delay>0s</network:cci.startup-delay>
+    <network:cci.poll-frequency>5s</network:cci.poll-frequency>
+    <network:cci.cppp.status>on</network:cci.cppp.status>
+
+    <network:cci.ghost-to-ecor.status>on</network:cci.ghost-to-ecor.status>
+    <network:cci.sr-assign.status>on</network:cci.sr-assign.status>
+    <network:cci.sr-matrix.status>on</network:cci.sr-matrix.status>
+    <network:cci.llmap.status>on</network:cci.llmap.status>
+    -->
+
+    <!--
+    <reporting:debug-store.log-s-lines.status>on</reporting:debug-store.log-s-lines.status>
+    <reporting:debug-store.log-poc2-id>on</reporting:debug-store.log-poc2-id>
+    <reporting:debug-store.log-raw-id>on</reporting:debug-store.log-raw-id>
+    <reporting:debug-store.log-regular-id>on</reporting:debug-store.log-regular-id>
+    -->
+    <reporting:debug-store.dump-hoc>on</reporting:debug-store.dump-hoc>
+
+
+    <!-- 2005-04-14 added per danner's request
+    With the release of kernel-4.5.3.5, we can now go back to the
+    planned use of 64K FDs on these systems.  WIll help with pconns
+    (perf, maybe flit to bit) and some of the exhaustion problems
+    Andy A discovered with itunes. (CR 57225)
+    1/14/13 : Changing the default max-fd to 96K by Sanjay
+    -->
+    <config:limits.max-fds>98304</config:limits.max-fds>
+
+    <!-- For BATS acls test -->
+    <config:region-number>3</config:region-number>
+
+    <!-- 2005-02-25 commented out per danner's request
+    <config:metadata.libxml-static-allocator>off</config:metadata.libxml-static-allocator>
+    -->
+
+   <!-- EJ developers: Uncomment to enable EJ
+     <config:region-number>777</config:region-number>
+        EJ developers: Uncomment to enable EJ -->
+
+    <!-- Adding tag for satic ssl slot (security:ssl.slot) that rely on 
+         a248e.xml(startupcert mode) to continue working after CR4162541 -->
+    <!-- Commented out by setup script !-->
+<!--     <config:use-startupcert-on-disk>on</config:use-startupcert-on-disk> -->
+
+    <!-- Commented out by setup script !-->
+<!--     <security:ssl.slot>key=trident.key cert=trident.crt host_cn_match=off ifc=443 ifc=9001</security:ssl.slot> -->
+    <!-- Commented out by setup script !-->
+<!--     <security:ssl.slot>key=caqa2-3.key cert=caqa2-3.crt host_cn_match=off ifc=11604</security:ssl.slot> -->
+    <!--
+    <security:ssl.addr-slots>127.0.0.1-10 1</security:ssl.addr-slots>
+    <security:ssl.port-slots>500-510 1</security:ssl.port-slots>
+    <security:essl.status>on</security:essl.status>
+    <config:legacy.secure-allocator-size>67108864</config:legacy.secure-allocator-size>
+    -->
+
+    <match:edge.os value="linux*">
+      <cache:settings.log>/usr/local/trident/logs/cache.log</cache:settings.log>
+    </match:edge.os>
+    <match:edge.os value="win32">
+      <cache:settings.log>c:/usr/local/trident/logs/cache.log</cache:settings.log>
+    </match:edge.os>
+
+    <network:http.port>80</network:http.port>
+    <reporting:debug-options>ALL,1 USS,2 MUXER,2 CCI_LKP,2 CCI_RDR,5 GUIDE,2 RACE,2</reporting:debug-options>
+
+    <!-- This will hide key agent startup messages -->
+    <reporting:debug-ssl.keyagent-startup-period>0s</reporting:debug-ssl.keyagent-startup-period>
+
+    <!--
+    <reporting:log.modify>
+        <status>on</status>
+        <logline>r</logline>
+        <field>12</field>
+        <rule>q/query string removed/</rule>
+    </reporting:log.modify>
+    <reporting:log.modify>
+        <status>off</status>
+        <logline>f</logline>
+        <field>13</field>
+        <rule>q/mystring can you handle this long string or will you get burned\/trashed/</rule>
+    </reporting:log.modify>
+    <reporting:log.modify>
+        <status>off</status>
+        <logline>f</logline>
+        <field>27</field>
+        <rule>q/mystring can you handle this long string or will you get burned\/trashed/</rule>
+    </reporting:log.modify>
+    -->
+
+    <cache:settings.dir>/ghostcache/ghost3 /dev/hda4 13100 16 256</cache:settings.dir>
+    <!-- PERF TESTING USE for all versions
+    <cache:settings.dir>/ghostcache/ghost3 /dev/sda1 26300 16 256</cache:settings.dir>
+    <cache:settings.dir>/ghostcache2/ghost3 /dev/sdb1 22100 16 256</cache:settings.dir>
+    <cache:settings.dir>/ghostcache3/ghost3 /dev/sdc1 24200 16 256</cache:settings.dir>
+    <cache:settings.dir>/ghostcache4/ghost3 /dev/sdd1 28300 16 256</cache:settings.dir>
+    <cache:settings.dir>/ghostcache5/ghost3 /dev/sde1 28300 16 256</cache:settings.dir>
+    <cache:settings.dir>/ghostcache6/ghost3 /dev/sdf1 28300 16 256</cache:settings.dir>
+    PERF TESTING USE for all versions -->
+
+    <cache:settings.effective-user>trident</cache:settings.effective-user>
+    <cache:settings.effective-group>trident</cache:settings.effective-group>
+    <cache:settings.access-log>/usr/local/trident/logs/ghost.access.log</cache:settings.access-log>
+    <cache:settings.log>/usr/local/trident/logs/cache.log</cache:settings.log>
+    <cache:settings.mdttrace-log>/usr/local/trident/logs/ghost.mdttrace.log</cache:settings.mdttrace-log>
+
+    <config:legacy.shutdown-lifetime>0s</config:legacy.shutdown-lifetime>
+
+    <config:legacy.acl>manager proto cache_object</config:legacy.acl>
+    <config:legacy.acl>mgr_ports myport 443 9001</config:legacy.acl>
+    <config:legacy.acl>localhost src 127.0.0.1/32</config:legacy.acl>
+    <config:legacy.acl>localhost6 src ::1</config:legacy.acl>
+    <config:legacy.acl>all src 0.0.0.0/0</config:legacy.acl>
+    <config:legacy.acl>CONNECT method CONNECT</config:legacy.acl>
+    <config:legacy.acl>valid_methods method GET POST HEAD TRIDENT_META_UPDATE TRIDENT_STRICT_META_UPDATE TRIDENT_META_CHECK TRIDENT_STRICT_META_CHECK TRIDENT_PURGE TRIDENT_PURGE_UPDATE TRIDENT_TRANSLATE CONNECT TRIDENT_STREAMING_REQUEST TRIDENT_PREFETCH_PUSH TRIDENT_PRECONN OPTIONS PROPFIND PUT PROPPATCH MKCOL COPY MOVE LOCK UNLOCK DELETE ACL DMCREATE DMMKPATH DMMKPATHS DMOVERLAY DMPATCHPATHS SETPROCESS SETREDIRECT TRUTHGET TRIDENT_CACHE_CHECK DMINDEX REPORT MKCALENDAR ACCOUNT-REINIT TRIDENT_REMOTE_META_UPDATE TRIDENT_REMOTE_META_CHECK TRIDENT_REMOTE_META_REMOVE TRIDENT_REMOTE_PURGE_UPDATE TRIDENT_FETCH TRIDENT_META_DELETE</config:legacy.acl>
+    <config:legacy.acl>META_UPDATE method TRIDENT_META_UPDATE TRIDENT_STRICT_META_UPDATE TRIDENT_PURGE_UPDATE TRIDENT_META_DELETE</config:legacy.acl>
+
+    # This below mdt will make the meta updates pass when estest
+    # are run in ipv6 mode. This might need some change when CR 870329
+    # is addressed.
+    <network:http.access>allow META_UPDATE localhost6</network:http.access>
+    <network:http.access>deny META_UPDATE !localhost</network:http.access>
+    <network:http.access>deny manager !mgr_ports</network:http.access>
+    <network:http.access>allow valid_methods</network:http.access>
+
+    <!-- Give us the ability to test ICP, off by default. -AA 6/8/05 -->
+    <network:icp.status>off</network:icp.status>
+    <network:icp.port>2002</network:icp.port>
+    <network:icp.access>allow localhost</network:icp.access>
+    <network:icp.peer>127.0.0.1 sibling 80 2002</network:icp.peer>
+    <network:icp.verbose-logging>on</network:icp.verbose-logging>
+
+    <!-- <config:legacy.ident-lookup-access>deny all</config:legacy.ident-lookup-access> -->
+
+    <config:legacy.yahoo-backstop-rule>.yimg.com /7/32/31/000</config:legacy.yahoo-backstop-rule>
+    <config:legacy.yahoo-backstop-rule>.yahoo.com /7/32/31/000</config:legacy.yahoo-backstop-rule>
+    <config:legacy.yahoo-backstop-rule>.broadcast.com /7/32/31/003</config:legacy.yahoo-backstop-rule>
+    <config:legacy.yahoo-backstop-rule>.geocities.com /7/32/31/004</config:legacy.yahoo-backstop-rule>
+    <config:legacy.yahoo-backstop-rule>.yahoo.co.jp /7/32/31/007</config:legacy.yahoo-backstop-rule>
+    <config:legacy.yahoo-backstop-rule>.yahoo.co.kr /7/32/31/008</config:legacy.yahoo-backstop-rule>
+
+    <!-- 2005-05-04 Will be deleted by perf testing automatically -->
+        <assign:region-attribute>development bats-test-attribute network-freeflow</assign:region-attribute>
+    <!-- Commented out by setup script !-->
+<!-- <assign:region-attribute>development bats-test-attribute</assign:region-attribute> -->
+
+    <config:kmi-collection>
+      <name>g2g_hdr_auth_http</name>
+      <type>g2g-hdr-auth</type>
+    </config:kmi-collection>
+    
+    <config:kmi-collection>
+      <name>g2g_hdr_auth_https</name>
+      <type>g2g-hdr-auth</type>
+    </config:kmi-collection>
+    
+    <config:kmi-collection>
+      <name>coatcheck</name>
+      <type>coatcheck</type>
+    </config:kmi-collection>
+
+    <config:kmi-collection>
+      <name>kdc_content</name>
+      <type>ssl-cert</type>
+    </config:kmi-collection>
+
+    <config:kmi-collection>
+      <name>coll2</name>
+      <type>ssl-cert</type>
+    </config:kmi-collection>
+
+    <config:kmi-collection>
+      <name>coll3</name>
+      <type>ssl-cert</type>
+    </config:kmi-collection>
+
+    <config:kmi-collection>
+      <name>edgejava_session_keys_essl</name>
+    </config:kmi-collection>
+
+    <config:kmi-collection>
+      <name>payment_gateway_accounts</name>
+      <type>coatcheck</type>
+    </config:kmi-collection>
+
+    <config:kmi-collection>
+      <name>essl_pfs</name>
+      <type>unknown</type>
+    </config:kmi-collection>
+
+    <config:kmi-collection>
+      <name>core_ff_tokenrevsecret</name>
+      <type>symmetric_key</type>
+    </config:kmi-collection>
+    
+    <!-- EJ developers: Uncomment for ESSL mode
+    <edgecomputing:java.baseline>
+      <session.security>
+        <status>on</status>
+        <kmi-collection-name>edgejava_session_keys_essl</kmi-collection-name>
+      </session.security>
+    </edgecomputing:java.baseline>
+    EJ developers: Uncomment for ESSL mode -->
+
+<!--EJREMOVE RE-ENABLING as ignore-preload=off used by some tests causes ghost crashes with EJ mdt removed-->
+    <edgecomputing:system.service name="EdgeJava">
+      <java>
+        <jdk-type name="sun-jdk-1.6.0">
+          <version>1.6.0</version>
+          <description>Sun JDK 1.6.0_02</description>
+          <load-library-path>/usr/local/trident/lib/ec/java/ej-jdk/ej-sun-jdk-1.6.0_02/jre/lib/i386/server:/usr/local/trident/lib/ec/java/ej-jdk/ej-sun-jdk-1.6.0_02/jre/lib/i386:/usr/local/trident/lib/ec/java/ej-jdk/ej-sun-jdk-1.6.0_02/jre/../lib/i386</load-library-path>
+          <jvm-agent>
+            <status>on</status>
+            <library-name>jvmti-agent</library-name>
+          </jvm-agent>
+          <ld-preload-library>/usr/local/trident/lib/ec/java/jesapi/intercept/libIntercept.so</ld-preload-library>
+          <launcher>/usr/local/trident/lib/ec/java/ej-jdk/ej-sun-jdk-1.6.0_02/bin/ej-appserver-launcher</launcher>
+          <vendor>sun</vendor>
+          <vm-type>server</vm-type>
+          <log-redirect-script>/usr/local/trident/lib/ec/java/jesapi/bin/exec-and-log.pl</log-redirect-script>
+          <capability>
+            <heap-dump>on</heap-dump>
+          </capability>
+        </jdk-type>
+        <jdk-type name="ibm-jdk-1.4.1">
+          <version>1.4.1</version>
+          <description>IBM JDK 1.4.1</description>
+          <load-library-path/>
+          <ld-preload-library>/usr/local/trident/lib/ec/java/jesapi/intercept/libIntercept.so</ld-preload-library>
+          <jvm-agent>
+            <status>on</status>
+            <library-name>jvmmi-agent</library-name>
+          </jvm-agent>
+          <launcher>/usr/local/trident/lib/ec/java/ej-jdk/ej-ibm-jdk-1.4.1/bin/ej-appserver-launcher</launcher>
+          <vendor>ibm</vendor>
+          <vm-type>server</vm-type>
+          <log-redirect-script>/usr/local/trident/lib/ec/java/jesapi/bin/exec-and-log.pl</log-redirect-script>
+          <system-property-entry name="ibm.stream.nio">
+            <value>true</value>
+            <status>on</status>
+          </system-property-entry>
+          <capability>
+            <heap-dump>on</heap-dump>
+            <thread-dump>on</thread-dump>
+          </capability>
+        </jdk-type>
+
+        <tomcat-type name="tomcat-4.0.5">
+          <home>/usr/local/trident/lib/ec/java/ej-appserver/ej-tomcat-4.0.5</home>
+          <war-prepare-script>/usr/local/trident/lib/ec/java/jesapi/bin/prepare-war.pl</war-prepare-script>
+          <classpath>/usr/local/trident/lib/ec/java/ej-appserver/ej-tomcat-4.0.5/bin/ej-bootstrap.jar:/usr/local/trident/lib/ec/java/ej-appserver/ej-tomcat-4.0.5/bin/bootstrap.jar</classpath>
+          <security-policy>/usr/local/trident/lib/ec/java/ej-appserver/ej-tomcat-4.0.5/conf-template/ej-tomcat.policy</security-policy>
+          <setup-script>/usr/local/trident/lib/ec/java/ej-appserver/ej-tomcat-4.0.5/bin/ej-tomcat-setup.pl</setup-script>
+          <monitorapp-path>/usr/local/trident/lib/ec/java/jesapi/monitorapp/tomcat/monitorapp</monitorapp-path>
+          <jni-library-path>/usr/local/trident/lib/ec/java/jesapi/jni</jni-library-path>
+          <debug-level>0</debug-level>
+          <endorsed-dirs>/usr/local/trident/lib/ec/java/ej-appserver/ej-tomcat-4.0.5/bin:/usr/local/trident/lib/ec/java/ej-appserver/ej-tomcat-4.0.5/common/lib</endorsed-dirs>
+          <load-time>60s</load-time>
+          <base-rss>25MB</base-rss>
+          <load-mem-required>2MB</load-mem-required>
+          <deny-requests-during-webapp-ops>on</deny-requests-during-webapp-ops>
+        </tomcat-type>
+<!--EJREMOVE RE-ENABLING as ignore-preload=off used by some tests causes ghost crashes with EJ mdt removed-->
+
+        <!-- Tomcat with JDK 1.4.x.  Endorsed dirs is different due to
+             it being added to the sun.boot.class.path with this JDK
+             version. -->
+        <tomcat-type name="tomcat-4.0.5-jdk-1.4">
+          <home>/usr/local/trident/lib/ec/java/ej-appserver/ej-tomcat-4.0.5</home>
+          <war-prepare-script>/usr/local/trident/lib/ec/java/jesapi/bin/prepare-war.pl</war-prepare-script>
+          <classpath>/usr/local/trident/lib/ec/java/ej-appserver/ej-tomcat-4.0.5/bin/ej-bootstrap.jar:/usr/local/trident/lib/ec/java/ej-appserver/ej-tomcat-4.0.5/bin/bootstrap.jar</classpath>
+          <security-policy>/usr/local/trident/lib/ec/java/ej-appserver/ej-tomcat-4.0.5/conf-template/ej-tomcat.policy</security-policy>
+          <setup-script>/usr/local/trident/lib/ec/java/ej-appserver/ej-tomcat-4.0.5/bin/ej-tomcat-setup.pl</setup-script>
+          <monitorapp-path>/usr/local/trident/lib/ec/java/jesapi/monitorapp/tomcat/monitorapp</monitorapp-path>
+          <jni-library-path>/usr/local/trident/lib/ec/java/jesapi/jni</jni-library-path>
+          <debug-level>0</debug-level>
+          <endorsed-dirs>/usr/local/trident/lib/ec/java/ej-appserver/ej-tomcat-4.0.5/common/endorsed</endorsed-dirs>
+          <load-time>60s</load-time>
+          <base-rss>25MB</base-rss>
+          <load-mem-required>2MB</load-mem-required>
+          <deny-requests-during-webapp-ops>on</deny-requests-during-webapp-ops>
+        </tomcat-type>
+
+        <tomcat-type name="tomcat-5.5">
+          <home>/usr/local/trident/lib/ec/java/ej-appserver/ej-tomcat-5.5</home>
+          <war-prepare-script>/usr/local/trident/lib/ec/java/jesapi/bin/prepare-war.pl</war-prepare-script>
+          <classpath>/usr/local/trident/lib/ec/java/ej-appserver/ej-tomcat-5.5/bin/ej-bootstrap.jar:/usr/local/trident/lib/ec/java/ej-appserver/ej-tomcat-5.5/bin/bootstrap.jar</classpath>
+          <security-policy>/usr/local/trident/lib/ec/java/ej-appserver/ej-tomcat-5.5/conf-template/ej-tomcat.policy</security-policy>
+          <setup-script>/usr/local/trident/lib/ec/java/ej-appserver/ej-tomcat-5.5/bin/ej-tomcat-setup.pl</setup-script>
+          <monitorapp-path>/usr/local/trident/lib/ec/java/jesapi/monitorapp/tomcat/monitorapp</monitorapp-path>
+          <jni-library-path>/usr/local/trident/lib/ec/java/jesapi/jni</jni-library-path>
+          <debug-level>3</debug-level>
+          <endorsed-dirs>/usr/local/trident/lib/ec/java/ej-appserver/ej-tomcat-5.5/common/endorsed</endorsed-dirs>
+          <load-time>60s</load-time>
+          <base-rss>25MB</base-rss>
+          <load-mem-required>2MB</load-mem-required>
+          <deny-requests-during-webapp-ops>on</deny-requests-during-webapp-ops>
+        </tomcat-type>
+
+        <was-type name="websphere-5.1">
+          <home>/usr/local/trident/lib/ec/java/ej-appserver/ej-was-5.1</home>
+          <war-prepare-script>/usr/local/trident/lib/ec/java/jesapi/bin/prepare-war.pl</war-prepare-script>
+          <ear-prepare-script>/usr/local/trident/lib/ec/java/ej-appserver/ej-was-5.1/bin/prepare-ear.pl</ear-prepare-script>
+          <classpath>/usr/local/trident/lib/ec/java/ej-appserver/ej-was-5.1/bin/ej-wasBootstrap.jar:/usr/local/trident/lib/ec/java/ej-appserver/ej-was-5.1/bin/trident-jesapi.jar:/usr/local/trident/lib/ec/java/ej-appserver/ej-was-5.1/bin/commons-collections.jar:/usr/local/trident/lib/ec/java/ej-appserver/ej-was-5.1/properties-template:/usr/local/trident/lib/ec/java/ej-appserver/ej-was-5.1/properties:/usr/local/trident/lib/ec/java/ej-appserver/ej-was-5.1/lib/bootstrap.jar:/usr/local/trident/lib/ec/java/ej-appserver/ej-was-5.1/lib/j2ee.jar:/usr/local/trident/lib/ec/java/ej-appserver/ej-was-5.1/lib/lmproxy.jar:/usr/local/trident/lib/ec/java/ej-appserver/ej-was-5.1/lib/urlprotocols.jar</classpath>
+          <security-policy>/usr/local/trident/lib/ec/java/ej-appserver/ej-was-5.1/properties-template/server.policy</security-policy>
+          <setup-script>/usr/local/trident/lib/ec/java/ej-appserver/ej-was-5.1/bin/was-setup.pl</setup-script>
+          <monitorapp-path>/usr/local/trident/lib/ec/java/jesapi/monitorapp/was/__ej-monitorapp__.ear</monitorapp-path>
+          <jni-library-path>/usr/local/trident/lib/ec/java/jesapi/jni:/usr/local/trident/lib/ec/java/ej-appserver/ej-was-5.1/bin</jni-library-path>
+          <jaas-config>/usr/local/trident/lib/ec/java/ej-appserver/ej-was-5.1/properties-template/wsjaas.conf</jaas-config>
+          <bootclasspath>/usr/local/trident/lib/ec/java/ej-appserver/ej-was-5.1/java/jre/lib/ext/ibmorb.jar:/usr/local/trident/lib/ec/java/ej-appserver/ej-was-5.1/java/jre/lib/ext/ibmext.jar</bootclasspath>
+          <ext>/usr/local/trident/lib/ec/java/ej-appserver/ej-was-5.1/java/lib:/usr/local/trident/lib/ec/java/ej-appserver/ej-was-5.1/classes:/usr/local/trident/lib/ec/java/ej-appserver/ej-was-5.1/lib:/usr/local/trident/lib/ec/java/ej-appserver/ej-was-5.1/lib/ext</ext>
+          <load-time>180s</load-time>
+          <base-rss>75MB</base-rss>
+          <load-mem-required>23MB</load-mem-required> 
+       </was-type>
+       <was-type name="websphere-5.1.1.3">
+          <home>/usr/local/trident/lib/ec/java/ej-appserver/ej-was-5.1.1.3</home>
+          <war-prepare-script>/usr/local/trident/lib/ec/java/jesapi/bin/prepare-war.pl</war-prepare-script>
+          <ear-prepare-script>/usr/local/trident/lib/ec/java/ej-appserver/ej-was-5.1.1.3/bin/prepare-ear.pl</ear-prepare-script>
+          <classpath>/usr/local/trident/lib/ec/java/ej-appserver/ej-was-5.1.1.3/bin/ej-wasBootstrap.jar:/usr/local/trident/lib/ec/java/ej-appserver/ej-was-5.1.1.3/bin/trident-jesapi.jar:/usr/local/trident/lib/ec/java/ej-appserver/ej-was-5.1.1.3/bin/commons-collections.jar:/usr/local/trident/lib/ec/java/ej-appserver/ej-was-5.1.1.3/properties-template:/usr/local/trident/lib/ec/java/ej-appserver/ej-was-5.1.1.3/properties:/usr/local/trident/lib/ec/java/ej-appserver/ej-was-5.1.1.3/lib/bootstrap.jar:/usr/local/trident/lib/ec/java/ej-appserver/ej-was-5.1.1.3/lib/j2ee.jar:/usr/local/trident/lib/ec/java/ej-appserver/ej-was-5.1.1.3/lib/lmproxy.jar:/usr/local/trident/lib/ec/java/ej-appserver/ej-was-5.1.1.3/lib/urlprotocols.jar</classpath>
+          <security-policy>/usr/local/trident/lib/ec/java/ej-appserver/ej-was-5.1.1.3/properties-template/server.policy</security-policy>
+          <setup-script>/usr/local/trident/lib/ec/java/ej-appserver/ej-was-5.1.1.3/bin/was-setup.pl</setup-script>
+          <monitorapp-path>/usr/local/trident/lib/ec/java/jesapi/monitorapp/was/__ej-monitorapp__.ear</monitorapp-path>
+          <jni-library-path>/usr/local/trident/lib/ec/java/jesapi/jni:/usr/local/trident/lib/ec/java/ej-appserver/ej-was-5.1.1.3/bin</jni-library-path>
+          <jaas-config>/usr/local/trident/lib/ec/java/ej-appserver/ej-was-5.1.1.3/properties-template/wsjaas.conf</jaas-config>
+          <bootclasspath>/usr/local/trident/lib/ec/java/ej-appserver/ej-was-5.1.1.3/java/jre/lib/ext/ibmorb.jar:/usr/local/trident/lib/ec/java/ej-appserver/ej-was-5.1.1.3/java/jre/lib/ext/ibmext.jar</bootclasspath>
+          <ext>/usr/local/trident/lib/ec/java/ej-appserver/ej-was-5.1.1.3/java/lib:/usr/local/trident/lib/ec/java/ej-appserver/ej-was-5.1.1.3/classes:/usr/local/trident/lib/ec/java/ej-appserver/ej-was-5.1.1.3/lib:/ej-was-5.1.1.3/lib/ext</ext>
+          <load-time>180s</load-time>
+          <base-rss>75MB</base-rss>
+          <load-mem-required>23MB</load-mem-required>
+        </was-type>
+<!--EJREMOVE RE-ENABLING as ignore-preload=off used by some tests causes ghost crashes with EJ mdt removed-->
+        <managed-process-type name="was-5.1-ibm-jdk-1.4.1">
+          <version>1.0</version>
+          <description>WebSphere 5.1 and IBM JDK 1.4.1</description>
+          <jdk-type-ref>ibm-jdk-1.4.1</jdk-type-ref>
+          <appserver-type-ref>websphere-5.1</appserver-type-ref>
+        </managed-process-type>
+
+        <managed-process-type name="tomcat-4.0.5-ibm-jdk-1.4.1">
+          <version>1.0</version>
+          <description>Tomcat 4.0.5 and IBM JDK 1.4.1</description>
+          <jdk-type-ref>ibm-jdk-1.4.1</jdk-type-ref>
+          <appserver-type-ref>tomcat-4.0.5-jdk-1.4</appserver-type-ref>
+        </managed-process-type>
+        <managed-process-type name="tomcat-5.5-sun-jdk-1.6">
+          <version>1.0</version>
+          <description>Tomcat 5.5.x and Sun JDK 1.6.x</description>
+          <jdk-type-ref>sun-jdk-1.6.0</jdk-type-ref>
+          <appserver-type-ref>tomcat-5.5</appserver-type-ref>
+        </managed-process-type>
+
+        <reserved-jndi-namespace>com.trident.ej</reserved-jndi-namespace>
+        <writedir-jndi-name>writedir</writedir-jndi-name>
+        <jesapi-config-path>/jesapi-config.xml</jesapi-config-path>
+      </java>
+    </edgecomputing:system.service>
+<!--END EJREMOVE RE-ENABLING as ignore-preload=off used by some tests causes ghost crashes with EJ mdt removed-->
+
+<!--EJREMOVE    <edgecomputing:java.baseline.status>on</edgecomputing:java.baseline.status>-->
+
+
+    <!-- 2005-05-04 added for perf testing as suggested by danner   -->
+    <!-- The following sections are generic to all ghost versions   -->
+    <!-- PERF TESTING USE for all versions
+    <cache:store.mem-max-age>43200</cache:store.mem-max-age>
+    <cache:quotas.pin-control.time-interval>4h</cache:quotas.pin-control.time-interval>
+    <config:legacy.precount-cost>25000</config:legacy.precount-cost>
+    <edgecomputing:esi.tree-caching.max-memory>50MB</edgecomputing:esi.tree-caching.max-memory>
+
+    <reporting:load>
+      <bogodisk>
+        <value>1200000</value>
+        <per-byte-cost>0 1 1 0</per-byte-cost>
+        <min-cost>0 4000 4000 0</min-cost>
+        <partitions>sda1 </partitions>
+      </bogodisk>
+      <ssl>
+        <per-byte-bogocpu-cost>60 60 60 60</per-byte-bogocpu-cost>
+        <bogocpu-min-cost-first>7600 7600 7600 7600</bogocpu-min-cost-first>
+        <bogocpu-min-cost-nonfirst>3000 3000 3000 3000</bogocpu-min-cost-nonfirst>
+      </ssl>
+      <http>
+        <per-byte-bogocpu-cost>20 20 20 20</per-byte-bogocpu-cost>
+        <bogocpu-min-cost-first>7600 7600 7600 7600</bogocpu-min-cost-first>
+        <bogocpu-min-cost-nonfirst>3000 3000 3000 3000</bogocpu-min-cost-nonfirst>
+      </http>
+    </reporting:load>
+    PERF TESTING USE for all versions -->
+
+    <!-- These tags are specific to certain versions or configuraton -->
+    <!-- autobuild or perf will pick up the right ones automatically -->
+    <!-- PERF TESTING USE for opterons
+    <config:legacy.allow-threaded-gzlogging>on</config:legacy.allow-threaded-gzlogging>
+    <config:legacy.access-log-filtering-cmd>/usr/local/trident/bin/gzlog /usr/local/trident/logs/ghost.access.log.gz</config:legacy.access-log-filtering-cmd>
+    <config:legacy.ddc-log-filtering-cmd>/usr/local/trident/bin/gzlog /usr/local/trident/logs/ghost.ddc.log.gz</config:legacy.ddc-log-filtering-cmd>
+    <config:legacy.activity-log-filtering-cmd>/usr/local/trident/bin/gzlog /usr/local/trident/logs/ghost.activity.log.gz</config:legacy.activity-log-filtering-cmd>
+    <config:legacy.fms-log-filtering-cmd>/usr/local/trident/bin/gzlog /usr/local/trident/logs/ghost.fms.log.gz</config:legacy.fms-log-filtering-cmd>
+    <reporting:load.flytes.value>15000000</reporting:load.flytes.value>
+    <reporting:load.bogocpu.value>16000000</reporting:load.bogocpu.value>
+    <security:ssl.key-signing-threads>
+      <status>on</status>
+      <threads>2</threads>
+    </security:ssl.key-signing-threads>
+    <config:legacy.gzip-threads>2</config:legacy.gzip-threads>
+    <config:legacy.gzip-threads-on>on</config:legacy.gzip-threads-on>
+    <config:legacy.cpu-num>200</config:legacy.cpu-num>
+    <assign:region-attribute>development bats-test-attribute network-freeflow edgejava 6D_4GB_OL DUALPROC</assign:region-attribute>
+    PERF TESTING USE for opterons -->
+
+    <!-- PERF TESTING USE for non-opterons with single CPU
+    <reporting:load.bogocpu.value>3000000</reporting:load.bogocpu.value>
+    <security:ssl.key-signing-threads>
+      <status>on</status>
+      <threads>1</threads>
+    </security:ssl.key-signing-threads>
+    <config:legacy.gzip-threads>1</config:legacy.gzip-threads>
+    <config:legacy.gzip-threads-on>on</config:legacy.gzip-threads-on>
+    <config:legacy.cpu-num>100</config:legacy.cpu-num>
+    <assign:region-attribute>development bats-test-attribute network-freeflow edgejava 4D_1GB_1L UNIPROC</assign:region-attribute>
+    PERF TESTING USE for non-opterons with single CPU -->
+
+    <!-- PERF TESTING USE for non-opterons with dual CPUs
+    <reporting:load.bogocpu.value>3000000</reporting:load.bogocpu.value>
+    <security:ssl.key-signing-threads>
+      <status>on</status>
+      <threads>2</threads>
+    </security:ssl.key-signing-threads>
+    <config:legacy.gzip-threads>2</config:legacy.gzip-threads>
+    <config:legacy.gzip-threads-on>on</config:legacy.gzip-threads-on>
+    <config:legacy.cpu-num>200</config:legacy.cpu-num>
+    <assign:region-attribute>development bats-test-attribute network-freeflow edgejava 4D_1GB_1L DUALPROC</assign:region-attribute>
+    PERF TESTING USE for non-opterons with dual CPUs -->
+
+    <!-- Begin mdt for Powersavings on lab machines. See https://gsd.trident.com/wiki/display/MGD/Power+Saving+on+our+lab+machines  -->
+    <config:powersave>
+      <cgroup>
+       <name>tridentdefault</name>
+       <path>/usr/local/trident/work/cgroup/tridentdefault/</path>
+      </cgroup>
+      <phantom-cgroup>
+       <name>ghostPhantom</name>
+       <path>/usr/local/trident/work/cgroup/ghostPhantom/</path>
+      </phantom-cgroup>
+    </config:powersave>
+
+    <config:msr-setting>
+      <name>turbo_off</name>
+      <regno>0x199</regno>
+      <mask>0xFFFFFFFEFFFFFFFF</mask>
+      <value>0x0000000100000000</value>
+    </config:msr-setting>
+
+    <config:msr-setting>
+      <name>turbo_on</name>
+      <regno>0x199</regno>
+      <mask>0xFFFFFFFEFFFFFFFF</mask>
+      <value>0x0</value>
+    </config:msr-setting>
+
+    <config:msr-config>
+      <id>turbo-on</id>
+      <settings>turbo_on</settings>
+    </config:msr-config>
+
+    <config:msr-config>
+      <id>turbo-off</id>
+      <settings>turbo_off</settings>
+    </config:msr-config>
+
+    <config:legacy.cpu-num>800</config:legacy.cpu-num>
+    <!-- End mdt for Powersavings on lab machines. -->
+
+
+    <!-- Ghost stack manager configuration. -->
+    <config:mthreads>
+      <stack-managers>
+	<!-- dev-cstack is used on production and lab -->
+        <type>dev-cstack</type>
+        <!--type>mmap</type-->
+
+        <dev-cstack>
+          <path>/dev/cstack</path>
+          <guard-pages>10</guard-pages>
+          <stack-pages>400</stack-pages>
+          <global-pages>20000</global-pages>
+          <global-stacks>16000</global-stacks>
+          <global-max-free-pages>500</global-max-free-pages>
+          <local-max-free-pages>1000</local-max-free-pages>
+          <local-max-spare-pages>1000</local-max-spare-pages>
+	  <free-pages-chunk>300</free-pages-chunk>
+          <local-high-mark>20000</local-high-mark>
+          <local-reclaim-size>1000</local-reclaim-size>
+        </dev-cstack>
+
+        <mmap>
+          <stacks>3000</stacks>
+          <guard-pages>10</guard-pages>
+          <stack-pages>200</stack-pages>
+        </mmap>
+      </stack-managers>
+      <phantom-aio-wait>1</phantom-aio-wait>
+    </config:mthreads>
+
+    <!-- Disable akamill in ESTest, so that the test behavior doesn't change -->
+    <!-- Default value of config:akamill.status was changed to ON in code as a part of CR 4207125 -->
+    <config:akamill.status>off</config:akamill.status>
+
+    <!-- Enabling the reporting feature for ESTests to work -->
+    <reporting:akamill2.report-ghostvars-through-akamill>on</reporting:akamill2.report-ghostvars-through-akamill>
+
+    <!-- Adding the tag to prevent debug build from crashing at startup (Feature turned on by default in ghost code - CR 4161061 - So commenting the code) -->
+    <!-- <config:metadata.ignore-preload>on</config:metadata.ignore-preload> -->
+
+    <trident:include type="region" file="region.xml"/>
+    <trident:include type="baseline" file="baseline.xml"/>
+    <trident:include type="override" file="override.xml"/>
+    <trident:include type="fpindex" file="fpindex.xml"/>
+    <trident:include type="fpdata" file="fpdata.xml"/>
+    <trident:include type="global-fpdata" file="global-fpdata.xml"/>
+    <trident:include type="pearldata" file="pearlindex.xml"/> 
+    <trident:include type="pearlbilling" file="pearlbillingindex.xml"/> 
+    <trident:include type="appsecthr" file="appsecthrindex.xml"/>
+    <trident:include type="arlindex" file="arlindex.xml"/>
+    <trident:include type="dcvindex" file="dcvindex.xml"/>
+    <trident:include type="partnerindex" file="partnerindex.xml"/>
+    <trident:include type="bigskypartnerindex" file="bigskypartnerindex.xml"/>
+    <trident:include type="wafindex" file="wafindex.xml"/>
+    <trident:include type="tapiocabaseline" file="baseline.xml"/>
+    <trident:include type="tapiocaindex" file="tapiocaindex.xml"/>
+    <trident:include type="tapiocaoverride" file="override.xml"/> 
+    <!-- may become arl.index after transition to ARLv3 is complete
+    <trident:include type="warindex" file="warindex.xml"/> -->
+    <trident:include type="hoitacls" file="hoitacls.xml"/>
+    <trident:include type="aclslist" file="allow_dom"/>
+    <trident:include type="aclslist" file="allow_ip"/>
+    <trident:include type="aclslist" file="deny_dom"/>
+    <trident:include type="aclslist" file="deny_ip"/>
+    <trident:include type="globalcalist" file="global_server.xml"/>
+    <trident:include type="globalblocklist" file="blocked_certs.xml"/>
+    <trident:include type="clientcertblocklist" file="blocked_certs.xml"/>
+    <!-- <trident:include type="esslindex" file="esslindex.xml"/> -->
+    <trident:include type="certindex" file="esslindex.xml"/>
+    <!-- Commented out by setup script !-->
+<!--     <trident:include type="startupcert" file="a248e.xml"/> -->
+    <!-- Commented out by setup script !-->
+<!--     <trident:include type="startupcert" file="caqa2-3.xml"/> -->
+    <trident:include type="logconfig" file="logconfig.xml"/>
+    <trident:include type="logbilling" file="logbilling.xml"/>
+    <trident:include type="logoverride" file="logoverride.xml"/>
+    <trident:include type="eucvideoacl" file="euc_video_acl.xml"/>
+    <trident:include type="chinaacl" file="china_cdn_acl.xml"/>
+    <trident:include type="esslclientcerts" file="esslclientcertsindex.xml"/>
+    <trident:include type="reportingthroughput" file="reportingthroughput.xml"/>
+    <trident:include type="staplepurgeindex" file="staplepurgeindex.xml"/>
+    <trident:include type="feature-overrides" file="epd_iplist.xml"/>
+    <trident:include type="feature-overrides" file="epd_overrides.xml"/>
+    <trident:include type="akamillindex" file="akamillindex.xml"/>
+    <trident:include type="metacache" file="metacache.xml"/>
+    <trident:include type="cryptodata" file="cs_customer_map_info.xml"/>
+
+    <match:region.attribute value="network-freeflow">
+      <security:essl.ports>443 9001</security:essl.ports>
+      <security:essl.status>off</security:essl.status>
+
+      <config:kmi-collection>
+          <name>core_startup_cert</name>
+          <type>ssl-cert</type>
+      </config:kmi-collection>
+
+      <config:kmi-collection>
+          <name>ssl_cert</name>
+          <type>ssl-cert</type>
+      </config:kmi-collection>
+
+      <config:kmi-collection>
+          <name>cryptoserver_server_auth_CA</name>
+          <type>ssl-cert</type>
+      </config:kmi-collection>
+
+      <config:kmi-collection>
+          <name>cryptoserver_freeflow_auth</name>
+          <type>ssl-cert</type>
+      </config:kmi-collection>
+
+      <config:kmi-collection>
+          <name>cryptoserver_freeflow_remote</name>
+          <type>ssl-cert</type>
+      </config:kmi-collection>
+
+      <!-- <config:kmi-collection>
+          <name>essl_pfs</name>
+          <type>ssl-cert</type>
+      </config:kmi-collection> -->
+
+      <config:kmi-collection>
+          <name>core_ff_serverconfig</name>
+          <type>ssl-cert</type>
+      </config:kmi-collection>
+
+      <config:kmi-collection>
+          <name>core_L1_g2g_cert</name>
+          <type>ssl-cert</type>
+      </config:kmi-collection>
+
+      <config:kmi-collection>
+          <name>core_NS_g2g_cert</name>
+          <type>ssl-cert</type>
+      </config:kmi-collection>
+
+
+      <config:kmi-collection>
+          <name>core_ff_open_stk</name>
+          <type>ssl-cert</type>
+      </config:kmi-collection>
+
+      <config:kmi-collection>
+          <name>core_ff_pragmasecret</name>
+          <type>ssl-cert</type>
+      </config:kmi-collection>
+
+      <!-- MGTEST-948 -->
+      <!-- uvm status setting for network-freeflow -->
+      <cache:uvm.status>off</cache:uvm.status>
+
+      <!-- Enable GIO for network-freeflow -->
+      <cache:disk-io.gio-async-io-goc-enable>on</cache:disk-io.gio-async-io-goc-enable>
+      <cache:disk-io.gio-enable-timing>on</cache:disk-io.gio-enable-timing>
+    </match:region.attribute>
+
+    <match:region.attribute value="network-freeflow network-essl">
+      <config:kmi-collection>
+          <name>essl_cert</name>
+          <type>ssl-cert</type>
+      </config:kmi-collection>
+    </match:region.attribute>
+
+    <match:region.attribute value="network-essl">
+      <security:essl.ports>443 9001</security:essl.ports>
+      <security:essl.status>off</security:essl.status>
+
+      <config:kmi-collection>
+          <name>cryptoserver_server_auth_CA</name>
+          <type>ssl-cert</type>
+      </config:kmi-collection>
+
+      <config:kmi-collection>
+          <name>cryptoserver_freeflow_auth</name>
+          <type>ssl-cert</type>
+      </config:kmi-collection>
+
+      <config:kmi-collection>
+          <name>cryptoserver_freeflow_remote</name>
+          <type>ssl-cert</type>
+      </config:kmi-collection>
+
+      <config:kmi-collection>
+          <name>core_ff_serverconfig</name>
+          <type>ssl-cert</type>
+      </config:kmi-collection>
+
+      <config:kmi-collection>
+          <name>core_ff_open_stk</name>
+          <type>ssl-cert</type>
+      </config:kmi-collection>
+
+      <config:kmi-collection>
+          <name>core_ff_pragmasecret</name>
+          <type>ssl-cert</type>
+      </config:kmi-collection>
+
+      <config:kmi-collection>
+          <name>core_startup_cert</name>
+          <type>ssl-cert</type>
+      </config:kmi-collection>
+
+      <config:kmi-collection>
+          <name>ssl_cert</name>
+          <type>ssl-cert</type>
+      </config:kmi-collection>
+
+      <config:kmi-collection>
+          <name>essl_cert</name>
+          <type>ssl-cert</type>
+      </config:kmi-collection>
+
+      <config:kmi-collection>
+          <name>esslcert_L1_core</name>
+          <type>ssl-cert</type>
+      </config:kmi-collection>
+
+      <config:kmi-collection>
+          <name>core_L1_g2g_cert</name>
+          <type>ssl-cert</type>
+      </config:kmi-collection>
+
+      <config:kmi-collection>
+          <name>core_NS_g2g_cert</name>
+          <type>ssl-cert</type>
+      </config:kmi-collection>
+
+      <config:kmi-collection>
+          <name>core_L3_g2g_cert</name>
+          <type>ssl-cert</type>
+      </config:kmi-collection>
+
+      <config:kmi-collection>
+          <name>essl_pfs</name>
+          <type>ssl-cert</type>
+      </config:kmi-collection>
+
+      <config:kmi-collection>
+          <name>coll3</name>
+          <type>ssl-cert</type>
+      </config:kmi-collection>
+
+      <config:kmi-collection>
+          <name>payment_gateway_accounts</name>
+          <type>coatcheck</type>
+      </config:kmi-collection>
+
+      <config:kmi-collection>
+          <name>coatcheck</name>
+          <type>coatcheck</type>
+      </config:kmi-collection>
+
+      <config:kmi-collection>
+          <name>ghost_variable_encrypt</name>
+          <type>symmetric_key</type>
+      </config:kmi-collection>
+
+      <config:kmi-collection>
+          <name>encc</name>
+          <type>symmetric_key</type>
+      </config:kmi-collection>
+
+      <config:kmi-collection>
+          <name>rapid_auth</name>
+          <type>x25519</type>
+      </config:kmi-collection>
+
+      <config:kmi-collection>
+          <name>rapid_ghost</name>
+          <type>x25519</type>
+      </config:kmi-collection>
+
+      <config:kmi-collection>
+          <name>kjoy_auth</name>
+          <type>x25519</type>
+      </config:kmi-collection>
+
+      <config:kmi-collection>
+          <name>kjoy_ghost</name>
+          <type>x25519</type>
+      </config:kmi-collection>
+
+      <config:kmi-collection>
+          <name>g2g_tfo_secret</name>
+          <type>ssl-cert</type>
+      </config:kmi-collection>
+
+      <config:kmi-collection>
+          <name>g2g_tfo_secret_essl</name>
+          <type>ssl-cert</type>
+      </config:kmi-collection>
+
+      <config:kmi-collection>
+          <name>g2g_tfo_secret_ff</name>
+          <type>ssl-cert</type>
+      </config:kmi-collection>
+
+      <config:rollback.use-certificate-channel>off</config:rollback.use-certificate-channel>
+      <security:ssl.service-ip-fallback-shared-cert>on</security:ssl.service-ip-fallback-shared-cert>
+
+    </match:region.attribute>
+
+    <!-- Added by che on 11/15/2021: Enable new store rebuilder by default in BATS per Arun's request -->
+    <cache:store.rebuild-mode-parallel-async>on</cache:store.rebuild-mode-parallel-async>
+
+    
+    <!-- Added by setup script -->
+    <config:rollback.use-certificate-channel>off</config:rollback.use-certificate-channel>
+    
+    <!-- Added by setup script for components -->
+    <config:rollback.issm>off</config:rollback.issm>
+    
+    <!-- Added by setup script for components -->
+    <security:cryptoserver.server-port>11880</security:cryptoserver.server-port>
+    <security:cryptoserver.server-hostname>198.18.99.36</security:cryptoserver.server-hostname>
+    <config:cryptoserver-mode>required</config:cryptoserver-mode>
+  
+<!--Added by XML Manipulator library-->
+  <!--Content hash: 4cc73777ac52febec2005f57f1f865d1-->
+  <config:rollback.use-certificate-channel>off</config:rollback.use-certificate-channel>
+  <config:rollback.use-certificate-channel>off</config:rollback.use-certificate-channel>
+  <config:rollback.use-certificate-channel>off</config:rollback.use-certificate-channel>
+  
+<!--Added by XML Manipulator library-->
+  <!--Content hash: 4cc73777ac52febec2005f57f1f865d1-->
+  <!--Warning: An identical content hash already exists in this file. Adding the tags anyway.-->
+  <config:rollback.use-certificate-channel>off</config:rollback.use-certificate-channel>
+  <config:rollback.use-certificate-channel>off</config:rollback.use-certificate-channel>
+  <config:rollback.use-certificate-channel>off</config:rollback.use-certificate-channel>
+  
+<!--Added by XML Manipulator library-->
+  <!--Content hash: 4cc73777ac52febec2005f57f1f865d1-->
+  <!--Warning: An identical content hash already exists in this file. Adding the tags anyway.-->
+  <config:rollback.use-certificate-channel>off</config:rollback.use-certificate-channel>
+  <config:rollback.use-certificate-channel>off</config:rollback.use-certificate-channel>
+  <config:rollback.use-certificate-channel>off</config:rollback.use-certificate-channel>
+  </edge-config>
+</configs>

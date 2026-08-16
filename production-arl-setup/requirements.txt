@@ -1,0 +1,11 @@
+# Core dependencies
+click>=8.0.0
+paramiko>=3.0.0,<4.0.0  # Pin to 3.x for DSS key support (legacy SSH servers)
+pyyaml>=5.4.0
+requests>=2.25.0
+python-dateutil>=2.8.0
+
+# XML manipulation (local package)
+../xml-manipulator
+
+# Development dependencies (install with: pip install -r requirements-dev.txt)

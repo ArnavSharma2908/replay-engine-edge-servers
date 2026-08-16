@@ -1,0 +1,7 @@
+# Ignore the directories produced by creating a wheel
+build/
+dist/
+*.egg-info/
+# Misc
+.DS_Store
+__pycache__/

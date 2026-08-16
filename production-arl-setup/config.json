@@ -1,0 +1,7 @@
+{
+    "hostname": "198.18.99.44",
+    "username": "root",
+    "remote_dir": "/home/production/arl.data/",
+    "hd_data_path": "/myhome/shared/newMD/tarballs/ghostdir.hd.data/",
+    "waf_data_path": "/myhome/shared/newMD/tarballs/ghostdir.waf.data/"
+}
