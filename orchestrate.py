@@ -1373,8 +1373,7 @@ class ProductionReplayOrchestrator:
             "TEST_VUS": str(num_vus),
             "LOG_LEVEL": log_level,
             "SHARD_DIR": shard_dir,
-            "HOST_MAPPINGS": host_mappings_json,
-            "REPLAY_MODE": replay_config.get("mode", "origin"),
+            "HOST_MAPPINGS": host_mappings_json
         }
 
         # Build k6 command - environment flags must come AFTER 'run'
@@ -1384,7 +1383,6 @@ class ProductionReplayOrchestrator:
             "-e", f"LOG_LEVEL={log_level}",
             "-e", f"SHARD_DIR={shard_dir}",
             "-e", f"HOST_MAPPINGS={host_mappings_json}",
-            "-e", f"REPLAY_MODE={replay_config.get('mode', 'origin')}",
             str(self.config.replay_script_path)
         ]
 

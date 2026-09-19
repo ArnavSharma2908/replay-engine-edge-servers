@@ -65,30 +65,6 @@ def build_shards_response(shard_dir: Path) -> Dict[str, object]:
     }
 
 
-<<<<<<< HEAD
-def build_metrics_response(metrics_file: Path, mode: str) -> Dict[str, object]:
-    """Read measured k6 summary metrics; never invent values for the UI."""
-    metrics = _load_json(metrics_file.with_name(
-        f"{metrics_file.stem}_{mode}{metrics_file.suffix}"
-    ), {})
-    if not metrics:
-        raise FileNotFoundError(f"No measured {mode} replay is available")
-    return metrics
-
-
-def load_request_feed(requests_file: Path, limit: int) -> List[Dict[str, object]]:
-    if not requests_file.exists():
-        raise FileNotFoundError("No replay request telemetry is available")
-    rows = []
-    with requests_file.open("r", encoding="utf-8") as request_file:
-        for line in request_file:
-            if line.strip():
-                rows.append(json.loads(line))
-    return rows[-limit:]
-
-
-=======
->>>>>>> arnavsharma2908-add-readonly-api
 class ReplayApiHandler(BaseHTTPRequestHandler):
     """HTTP handler exposing only the two dashboard data endpoints."""
 
@@ -121,28 +97,6 @@ class ReplayApiHandler(BaseHTTPRequestHandler):
                 "requests_total": status["requests_total"],
             })
             return
-<<<<<<< HEAD
-        if route == "/api/metrics":
-            mode = urlparse(self.path).query.removeprefix("mode=") or "origin"
-            try:
-                self._json_response(build_metrics_response(
-                    self.server.metrics_file, mode
-                ))
-            except FileNotFoundError as error:
-                self._json_response({"error": str(error)}, 503)
-            return
-        if route == "/api/requests/live":
-            try:
-                query = urlparse(self.path).query
-                limit = int(query.removeprefix("limit=") or "20")
-                self._json_response({"requests": load_request_feed(
-                    self.server.requests_file, max(1, min(limit, 100))
-                )})
-            except (FileNotFoundError, ValueError, json.JSONDecodeError) as error:
-                self._json_response({"error": str(error)}, 503)
-            return
-=======
->>>>>>> arnavsharma2908-add-readonly-api
         self._json_response({"error": "Not found"}, 404)
 
     def log_message(self, format_string: str, *args) -> None:
@@ -154,11 +108,6 @@ def create_server(host: str, port: int, shard_dir: Path,
     server = ThreadingHTTPServer((host, port), ReplayApiHandler)
     server.shard_dir = shard_dir
     server.status_file = status_file
-<<<<<<< HEAD
-    server.metrics_file = status_file.with_name("replay_metrics.json")
-    server.requests_file = status_file.with_name("replay_requests.jsonl")
-=======
->>>>>>> arnavsharma2908-add-readonly-api
     return server
 
 

@@ -36,17 +36,5 @@ Reads the status written by the existing orchestrator around its k6 process:
 }
 ```
 
-<<<<<<< HEAD
-The measured comparison endpoints are also available after a k6 run:
-
-* `GET /api/metrics?mode=origin` or `mode=edge` reads the corresponding k6
-  summary from `output/replay_metrics_<mode>.json`.
-* `GET /api/requests/live?limit=20` reads request telemetry when the replay
-  writes `output/replay_requests.jsonl`; it returns a clear unavailable response
-  until that telemetry exists rather than fabricating requests.
-
-CORS is enabled for local dashboard development; no authentication is required.
-=======
 Only these two routes are implemented. CORS is enabled for local dashboard
 development; no authentication is required.
->>>>>>> arnavsharma2908-add-readonly-api
