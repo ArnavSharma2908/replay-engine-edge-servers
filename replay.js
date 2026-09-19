@@ -83,6 +83,7 @@ const SHARD_PREFIX = __ENV.SHARD_PREFIX || 'shard_';
 const SHARD_SUFFIX = __ENV.SHARD_SUFFIX || '.jsonl';
 const TEST_VUS = parseInt(__ENV.TEST_VUS || '2', 10);
 const TEST_HOST = __ENV.TEST_HOST || '';
+const REPLAY_MODE = (__ENV.REPLAY_MODE || 'origin').toLowerCase();
 
 // Parse HOST_MAPPINGS environment variable
 // Format: "hostname1:ip1,hostname2:ip2" or JSON string
@@ -818,6 +819,12 @@ export function handleSummary(data) {
   }
 
   const summary = {
+    mode: REPLAY_MODE,
+    latencyMs: data.metrics.http_req_duration
+      ? Math.round(data.metrics.http_req_duration.values['p(95)'] || 0)
+      : 0,
+    cacheHitRate: null,
+    bandwidthSavedBytes: null,
     total_requests: totalRequests,
     failed_requests: failedRequests,
     success_rate: (successRateValue * 100).toFixed(2),
@@ -845,6 +852,7 @@ export function handleSummary(data) {
   console.log(`EXIT_CODE:${exitCode}`);
 
   return {
+    [`output/replay_metrics_${REPLAY_MODE}.json`]: JSON.stringify(summary),
     'stdout': textSummary(data, { indent: ' ', enableColors: true }),
   };
 }

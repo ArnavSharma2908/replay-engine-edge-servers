@@ -1,0 +1,46 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+html, body, #root {
+  height: 100%;
+}
+
+body {
+  background-color: #0D0B08;
+  color: #F5EFE6;
+  -webkit-font-smoothing: antialiased;
+}
+
+::selection {
+  background-color: #FFB000;
+  color: #0D0B08;
+}
+
+* {
+  scrollbar-width: thin;
+  scrollbar-color: #3A3121 transparent;
+}
+*::-webkit-scrollbar {
+  width: 6px;
+}
+*::-webkit-scrollbar-thumb {
+  background-color: #3A3121;
+}
+
+:focus-visible {
+  outline: 2px solid #FFB000;
+  outline-offset: 2px;
+}
+
+@keyframes blink-dot {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.35; }
+}
+.pulse-dot {
+  animation: blink-dot 1.6s ease-in-out infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .pulse-dot { animation: none; }
+}

@@ -123,12 +123,82 @@ Edit `orchestrator_config.json`:
 
 ## Local dashboard API
 
-The additive read-only API serves the generated shard output and replay status:
+The dashboard is a Vite/React frontend. Run the backend API and the frontend in
+separate terminals from the repository root.
 
-```bash
+### 1. Generate the real pipeline data
+
+Activate the project virtual environment, then run the existing pipeline:
+
+```powershell
+.\.venv\Scripts\Activate.ps1
+python -m src.main
+```
+
+This reads access logs from `input/` and writes the shard output to
+`output/shards/`. The dashboard uses this output through the API; it does not
+use hard-coded shard totals.
+
+### 2. Start the API
+
+In a second terminal, from the repository root:
+
+```powershell
+.\.venv\Scripts\Activate.ps1
 python -m api.server
 ```
 
-It listens on `http://127.0.0.1:8000` by default. Set
-`VITE_API_BASE_URL=http://127.0.0.1:8000` in the dashboard, or override the
-port with `API_PORT`/`--port`.
+The API listens at `http://127.0.0.1:8000` by default and exposes:
+
+- `GET /api/shards` — real shard count, peak concurrency, and connection counts
+- `GET /api/replay/status` — replay progress from the latest orchestrator run
+
+The API enables CORS for the Vite development server. Verify it directly with:
+
+```powershell
+Invoke-RestMethod http://127.0.0.1:8000/api/shards
+Invoke-RestMethod http://127.0.0.1:8000/api/replay/status
+```
+
+### 3. Start the frontend
+
+In a third terminal, enter the dashboard directory:
+
+```powershell
+cd dashboard
+npm install
+```
+
+Create `dashboard/.env` with the API base URL:
+
+```env
+VITE_API_BASE_URL=http://127.0.0.1:8000
+```
+
+Start Vite:
+
+```powershell
+npm run dev
+```
+
+Open the URL printed by Vite, normally `http://localhost:5173`.
+
+Every displayed value is now sourced from generated shard files or measured
+replay telemetry. If a k6 summary or request telemetry file is not available,
+the corresponding panel shows `unavailable` rather than inventing a value.
+Run separate origin and edge replays to populate both comparison series.
+
+### Optional: run the full replay
+
+For a complete k6 replay, configure the machines in
+`orchestrator_config.json`, then run:
+
+```powershell
+python orchestrate.py --config orchestrator_config.json
+```
+
+The orchestrator updates `output/replay_status.json` while k6 runs and writes
+mode-specific k6 summaries such as `output/replay_metrics_origin.json`.
+Set `"mode": "origin"` or `"mode": "edge"` under the `replay` configuration
+before each run. The API automatically serves measured results to the
+dashboard.
