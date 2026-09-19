@@ -65,6 +65,7 @@ def build_shards_response(shard_dir: Path) -> Dict[str, object]:
     }
 
 
+<<<<<<< HEAD
 def build_metrics_response(metrics_file: Path, mode: str) -> Dict[str, object]:
     """Read measured k6 summary metrics; never invent values for the UI."""
     metrics = _load_json(metrics_file.with_name(
@@ -86,6 +87,8 @@ def load_request_feed(requests_file: Path, limit: int) -> List[Dict[str, object]
     return rows[-limit:]
 
 
+=======
+>>>>>>> arnavsharma2908-add-readonly-api
 class ReplayApiHandler(BaseHTTPRequestHandler):
     """HTTP handler exposing only the two dashboard data endpoints."""
 
@@ -118,6 +121,7 @@ class ReplayApiHandler(BaseHTTPRequestHandler):
                 "requests_total": status["requests_total"],
             })
             return
+<<<<<<< HEAD
         if route == "/api/metrics":
             mode = urlparse(self.path).query.removeprefix("mode=") or "origin"
             try:
@@ -137,6 +141,8 @@ class ReplayApiHandler(BaseHTTPRequestHandler):
             except (FileNotFoundError, ValueError, json.JSONDecodeError) as error:
                 self._json_response({"error": str(error)}, 503)
             return
+=======
+>>>>>>> arnavsharma2908-add-readonly-api
         self._json_response({"error": "Not found"}, 404)
 
     def log_message(self, format_string: str, *args) -> None:
@@ -148,8 +154,11 @@ def create_server(host: str, port: int, shard_dir: Path,
     server = ThreadingHTTPServer((host, port), ReplayApiHandler)
     server.shard_dir = shard_dir
     server.status_file = status_file
+<<<<<<< HEAD
     server.metrics_file = status_file.with_name("replay_metrics.json")
     server.requests_file = status_file.with_name("replay_requests.jsonl")
+=======
+>>>>>>> arnavsharma2908-add-readonly-api
     return server
 
 

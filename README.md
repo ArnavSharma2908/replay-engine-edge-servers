@@ -123,6 +123,7 @@ Edit `orchestrator_config.json`:
 
 ## Local dashboard API
 
+<<<<<<< HEAD
 The dashboard is a Vite/React frontend. Run the backend API and the frontend in
 separate terminals from the repository root.
 
@@ -202,3 +203,14 @@ mode-specific k6 summaries such as `output/replay_metrics_origin.json`.
 Set `"mode": "origin"` or `"mode": "edge"` under the `replay` configuration
 before each run. The API automatically serves measured results to the
 dashboard.
+=======
+The additive read-only API serves the generated shard output and replay status:
+
+```bash
+python -m api.server
+```
+
+It listens on `http://127.0.0.1:8000` by default. Set
+`VITE_API_BASE_URL=http://127.0.0.1:8000` in the dashboard, or override the
+port with `API_PORT`/`--port`.
+>>>>>>> arnavsharma2908-add-readonly-api

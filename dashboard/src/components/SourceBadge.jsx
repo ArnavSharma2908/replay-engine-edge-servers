@@ -1,5 +1,6 @@
 export default function SourceBadge({ source }) {
   const isLive = source === 'live'
+  const label = isLive ? 'live' : source === 'simulated' ? 'simulated' : 'unavailable'
   return (
     <span className="inline-flex items-center gap-1.5 font-mono text-[11px] tracking-wide text-ink-500">
       <span
@@ -7,7 +8,7 @@ export default function SourceBadge({ source }) {
           isLive ? 'bg-signal-500 pulse-dot' : 'bg-origin-400'
         }`}
       />
-      {isLive ? 'live' : 'unavailable'}
+      {label}
     </span>
   )
 }

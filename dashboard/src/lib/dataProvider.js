@@ -1,43 +1,47 @@
-// Single seam between the dashboard and the local replay telemetry API.
+// The two pipeline-backed calls use the local API. The comparison layer remains
+// a deliberately local simulation until a real edge/cache measurement exists.
+import { createMockEngine } from './mockEngine'
 
-const API_BASE = import.meta.env.VITE_API_BASE_URL || ''
+const API_BASE = import.meta.env.VITE_API_BASE_URL || 'http://127.0.0.1:8000'
+const engine = createMockEngine()
 
 async function tryFetch(path, options) {
-  if (!API_BASE) return null
   try {
     const controller = new AbortController()
     const timeout = setTimeout(() => controller.abort(), 1500)
-    const res = await fetch(`${API_BASE}${path}`, { ...options, signal: controller.signal })
+    const response = await fetch(`${API_BASE}${path}`, { ...options, signal: controller.signal })
     clearTimeout(timeout)
-    if (!res.ok) return null
-    return await res.json()
+    if (!response.ok) return null
+    return await response.json()
   } catch {
     return null
   }
 }
 
 export async function setEngineMode(mode) {
-  return { source: 'local', data: { mode } }
+  engine.setMode(mode)
+  return { source: 'simulated', data: { mode } }
 }
 
-// Advances the simulation exactly once per call — call this once per tick from the
-// UI's poll loop so every panel (metrics, heatmap, request feed) stays in lockstep.
 export async function getMetrics(mode) {
-  const real = await tryFetch(`/api/metrics?mode=${mode}`)
-  return real ? { source: 'live', data: real } : { source: 'unavailable', data: null }
+  const data = engine.step()
+  return { source: 'simulated', data: { ...data, mode } }
 }
 
 export async function getLiveRequests() {
-  const real = await tryFetch('/api/requests/live?limit=20')
-  return real ? { source: 'live', data: real.requests } : { source: 'unavailable', data: [] }
+  return { source: 'simulated', data: engine.getRequestFeedBatch() }
 }
 
 export async function getReplayStatus() {
-  const real = await tryFetch('/api/replay/status')
-  return real ? { source: 'live', data: real } : { source: 'unavailable', data: null }
+  const live = await tryFetch('/api/replay/status')
+  return live
+    ? { source: 'live', data: live }
+    : { source: 'simulated', data: engine.getReplayStatus() }
 }
 
 export async function getShardStats() {
-  const real = await tryFetch('/api/shards')
-  return real ? { source: 'live', data: real } : { source: 'unavailable', data: null }
+  const live = await tryFetch('/api/shards')
+  return live
+    ? { source: 'live', data: live }
+    : { source: 'simulated', data: engine.getShardSnapshot() }
 }
