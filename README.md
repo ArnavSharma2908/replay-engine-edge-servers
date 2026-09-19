@@ -120,3 +120,15 @@ Edit `orchestrator_config.json`:
 - Virtual environments in `.venv` and `production-arl-setup/.venv`
 - k6 installed for replay execution
 - SSH access to all Ghost machines
+
+## Local dashboard API
+
+The additive read-only API serves the generated shard output and replay status:
+
+```bash
+python -m api.server
+```
+
+It listens on `http://127.0.0.1:8000` by default. Set
+`VITE_API_BASE_URL=http://127.0.0.1:8000` in the dashboard, or override the
+port with `API_PORT`/`--port`.

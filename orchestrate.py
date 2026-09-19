@@ -29,6 +29,7 @@ import re
 from concurrent.futures import ThreadPoolExecutor, as_completed
 
 from ghost_restart import GhostRestartManager
+from api.replay_status import count_requests, write_status
 
 
 # ANSI color codes
@@ -1393,25 +1394,55 @@ class ProductionReplayOrchestrator:
         import os
         env = os.environ.copy()
         env.update({k: v for k, v in env_vars.items()})
+        status_file = self.config.output_dir / "replay_status.json"
+        requests_total = count_requests(self.config.shard_dir)
+        write_status(
+            status_file,
+            running=True,
+            requests_replayed=0,
+            requests_total=requests_total,
+            pid=os.getpid(),
+        )
 
         # Change to replay script directory
         replay_dir = self.config.replay_script_path.parent
         logger.substep(f"Executing k6 from {replay_dir}", status='running')
 
-        print()  # Add spacing before k6 output
-        result = subprocess.run(
-            cmd,
-            cwd=replay_dir,
-            env=env,
-            capture_output=False,  # Stream output to console
-            text=True
-        )
-        print()  # Add spacing after k6 output
+        try:
+            print()  # Add spacing before k6 output
+            result = subprocess.run(
+                cmd,
+                cwd=replay_dir,
+                env=env,
+                capture_output=False,  # Stream output to console
+                text=True
+            )
+            print()  # Add spacing after k6 output
+        except Exception:
+            write_status(
+                status_file,
+                running=False,
+                requests_replayed=0,
+                requests_total=requests_total,
+            )
+            raise
 
         if result.returncode != 0:
+            write_status(
+                status_file,
+                running=False,
+                requests_replayed=0,
+                requests_total=requests_total,
+            )
             logger.failure(f"Replay execution failed with exit code {result.returncode}")
             raise RuntimeError("Step 5 failed: Replay execution")
 
+        write_status(
+            status_file,
+            running=False,
+            requests_replayed=requests_total,
+            requests_total=requests_total,
+        )
         logger.success("Replay execution completed successfully")
 
 
